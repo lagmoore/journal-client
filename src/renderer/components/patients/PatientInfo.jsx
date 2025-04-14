@@ -29,25 +29,47 @@ const PatientInfo = ({ patient, onSave, isNew }) => {
   };
   
   // Validate form
-  const validateForm = () => {
-    const errors = {};
-    
-    if (!formData.firstName?.trim()) {
-      errors.firstName = t('validation.required');
-    }
-    
-    if (!formData.lastName?.trim()) {
-      errors.lastName = t('validation.required');
-    }
-    
-    if (formData.personalNumber && !/^(\d{8}[-+]?\d{4}|\d{12})$/.test(formData.personalNumber.replace(/\s/g, ''))) {
+  // Validate form
+const validateForm = () => {
+  const errors = {};
+  
+  // Only first name and last name are required
+  if (!formData.firstName?.trim()) {
+    errors.firstName = t('validation.required');
+  }
+  
+  if (!formData.lastName?.trim()) {
+    errors.lastName = t('validation.required');
+  }
+  
+  // Validate personal number format if provided
+  if (formData.personalNumber?.trim()) {
+    if (!/^(\d{8}[-+]?\d{4}|\d{12})$/.test(formData.personalNumber.replace(/\s/g, ''))) {
       errors.personalNumber = t('patients.validation.personalNumber');
     }
-    
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) {
+  }
+  
+  // Validate email if provided
+  if (formData.email?.trim()) {
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
       errors.email = t('validation.email');
     }
-    
+  }
+  
+  // Validate phone if provided
+  if (formData.phone?.trim()) {
+    if (!/^[0-9\s\-\+\(\)]{5,20}$/.test(formData.phone)) {
+      errors.phone = t('validation.phone');
+    }
+  }
+  
+  // Validate postal code if provided
+  if (formData.postalCode?.trim()) {
+    if (!/^(\d{3}\s?\d{2}|\d{5})$/.test(formData.postalCode)) {
+      errors.postalCode = t('validation.postalCode');
+    }
+  }
+  
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -110,14 +132,15 @@ const PatientInfo = ({ patient, onSave, isNew }) => {
             />
             
             <FormInput
-              type="text"
-              name="personalNumber"
-              value={formData.personalNumber}
-              onChange={handleChange}
-              label={t('patients.fields.personalNumber')}
-              placeholder={t('patients.placeholders.personalNumber')}
-              errorMessage={formErrors.personalNumber}
-            />
+  type="text"
+  name="personalNumber"
+  value={formData.personalNumber || ''}
+  onChange={handleChange}
+  label={t('patients.fields.personalNumber')}
+  placeholder={t('patients.placeholders.personalNumber')}
+  required={false} // Personal number is not required
+  errorMessage={formErrors.personalNumber}
+/>
             
             <FormInput
               type="date"
