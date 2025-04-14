@@ -1,0 +1,408 @@
+{
+  "app": {
+    "name": "Vyper Journal",
+    "tagline": "Journalsystem för familjehem och HVB-hem"
+  },
+  "common": {
+    "back": "Tillbaka",
+    "cancel": "Avbryt",
+    "confirm": "Bekräfta",
+    "create": "Skapa",
+    "delete": "Ta bort",
+    "edit": "Redigera",
+    "loading": "Laddar...",
+    "logout": "Logga ut",
+    "never": "Aldrig",
+    "save": "Spara",
+    "saving": "Sparar...",
+    "search": "Sök",
+    "language": "Språk",
+    "theme": {
+      "title": "Tema",
+      "light": "Ljust läge",
+      "dark": "Mörkt läge"
+    },
+    "error": "Fel",
+    "success": "Framgång"
+  },
+  "auth": {
+    "login": {
+      "title": "Logga in på ditt konto",
+      "emailPlaceholder": "E-post",
+      "passwordPlaceholder": "Lösenord",
+      "rememberMe": "Kom ihåg mig",
+      "forgotPassword": "Glömt lösenord?",
+      "loginButton": "Logga in",
+      "loginSuccessful": "Inloggningen lyckades"
+    },
+    "forgotPassword": {
+      "title": "Återställ ditt lösenord",
+      "description": "Ange din e-post för att få en länk för att återställa lösenordet",
+      "emailPlaceholder": "E-post",
+      "submitButton": "Skicka återställningslänk",
+      "backToLogin": "Tillbaka till inloggning",
+      "emailSent": "Instruktioner för återställning av lösenord skickade",
+      "emailSentDescription": "Om ett konto med den e-postadressen finns har vi skickat instruktioner för att återställa ditt lösenord."
+    },
+    "errors": {
+      "invalidCredentials": "Ogiltig e-post eller lösenord",
+      "loginFailed": "Inloggningen misslyckades. Försök igen.",
+      "resetRequestFailed": "Misslyckades med att begära återställning av lösenord. Försök igen.",
+      "initialization": "Misslyckades med att initiera autentisering."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Välkommen, {{name}}",
+    "stats": {
+      "patients": "Alla Patienter",
+      "activePatients": "Aktiva Patienter",
+      "journals": "Alla Journalanteckningar"
+    },
+    "quickActions": "Snabbåtgärder",
+    "recentJournals": "Senaste journalanteckningarna",
+    "noRecentJournals": "Inga senaste journalanteckningar",
+    "actions": {
+      "viewAll": "Visa alla"
+    },
+    "errors": {
+      "loadFailed": "Misslyckades med att ladda dashboarddata"
+    }
+  },
+  "patients": {
+    "title": "Patienter",
+    "newPatient": "Ny Patient",
+    "editPatient": "Redigera Patient: {{name}}",
+    "searchPlaceholder": "Sök patienter...",
+    "noResults": "Inga patienter hittades som matchar din sökning",
+    "empty": "Inga patienter hittades",
+    "sections": {
+      "personal": "Personlig Information",
+      "contact": "Kontaktinformation",
+      "emergency": "Nödkontakt",
+      "notes": "Ytterligare anteckningar"
+    },
+    "tabs": {
+      "info": "Information",
+      "journals": "Journalanteckningar"
+    },
+    "fields": {
+      "firstName": "Förnamn",
+      "lastName": "Efternamn",
+      "name": "Namn",
+      "personalNumber": "Personnummer",
+      "dateOfBirth": "Födelsedatum",
+      "dob": "Födelsedatum",
+      "gender": "Kön",
+      "email": "E-post",
+      "phone": "Telefon",
+      "address": "Adress",
+      "postalCode": "Postnummer",
+      "city": "Stad",
+      "country": "Land",
+      "contact": "Kontakt",
+      "emergencyName": "Nödkontaktens namn",
+      "emergencyPhone": "Nödkontaktens telefon",
+      "notes": "Anteckningar",
+      "status": "Status",
+      "createdAt": "Skapad",
+      "actions": "Åtgärder"
+    },
+    "placeholders": {
+      "firstName": "Ange förnamn",
+      "lastName": "Ange efternamn",
+      "personalNumber": "ÅÅMMDD-XXXX",
+      "email": "epost@exempel.com",
+      "phone": "Telefonnummer",
+      "address": "Gatuadress",
+      "postalCode": "Postnummer",
+      "city": "Stad",
+      "country": "Land",
+      "emergencyName": "Kontaktens namn",
+      "emergencyPhone": "Kontaktens telefon",
+      "notes": "Ytterligare anteckningar om patienten"
+    },
+    "gender": {
+      "unspecified": "Ospecificerad",
+      "male": "Man",
+      "female": "Kvinna",
+      "other": "Annat"
+    },
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "filters": {
+      "status": "Status",
+      "statusOptions": {
+        "all": "Alla Status",
+        "active": "Aktiv",
+        "inactive": "Inaktiv"
+      },
+      "sortBy": "Sortera efter",
+      "sortOptions": {
+        "lastName": "Efternamn",
+        "firstName": "Förnamn",
+        "personalNumber": "Personnummer",
+        "createdAt": "Skapad datum"
+      },
+      "sortOrder": "Sorteringsordning"
+    },
+    "validation": {
+      "personalNumber": "Ogiltigt format för personnummer"
+    },
+    "actions": {
+      "add": "Lägg till patient",
+      "addFirst": "Lägg till din första patient",
+      "view": "Visa detaljer",
+      "edit": "Redigera",
+      "delete": "Ta bort",
+      "activate": "Aktivera",
+      "deactivate": "Inaktivera"
+    },
+    "deleteDialog": {
+      "title": "Ta bort patient",
+      "message": "Är du säker på att du vill ta bort patienten {{name}}? Denna åtgärd kan inte ångras.",
+      "confirm": "Ta bort",
+      "cancel": "Avbryt"
+    },
+    "success": {
+      "created": "Patienten skapades framgångsrikt",
+      "updated": "Patienten uppdaterades framgångsrikt",
+      "deleted": "Patienten togs bort framgångsrikt"
+    },
+    "errors": {
+      "notFound": "Patienten hittades inte",
+      "loadFailed": "Misslyckades med att ladda patientdata",
+      "saveFailed": "Misslyckades med att spara patientdata",
+      "deleteFailed": "Misslyckades med att ta bort patienten"
+    }
+  },
+  "journals": {
+    "title": "Journalanteckningar",
+    "allJournals": "Alla Journalanteckningar",
+    "newJournal": "Ny Journalanteckning",
+    "editJournal": "Redigera Journalanteckning",
+    "forPatient": "För patient",
+    "searchPlaceholder": "Sök journalanteckningar...",
+    "noResults": "Inga journalanteckningar hittades som matchar din sökning",
+    "empty": "Inga journalanteckningar hittades",
+    "categories": {
+      "daily": "Daglig",
+      "medical": "Medicinsk",
+      "behavioral": "Beteende",
+      "educational": "Utbildning",
+      "social": "Social",
+      "other": "Övrigt"
+    },
+    "status": {
+      "draft": "Utkast",
+      "completed": "Slutförd",
+      "archived": "Arkiverad"
+    },
+    "fields": {
+      "title": "Titel",
+      "content": "Innehåll",
+      "category": "Kategori",
+      "status": "Status",
+      "createdBy": "Skapad av",
+      "createdAt": "Skapad",
+      "updatedAt": "Uppdaterad"
+    },
+    "placeholders": {
+      "title": "Ange titel",
+      "content": "Ange journalinnehåll...",
+      "category": "Välj kategori"
+    },
+    "filters": {
+      "all": "Alla Status",
+      "draft": "Utkast",
+      "completed": "Slutförd",
+      "archived": "Arkiverad",
+      "allPatients": "Alla Patienter",
+      "patient": "Patient",
+      "category": "Kategori",
+      "sortBy": "Sortera efter",
+      "newest": "Nyaste först",
+      "oldest": "Äldsta först",
+      "patientAZ": "Patient (A-Ö)",
+      "patientZA": "Patient (Ö-A)",
+      "dateRange": "Datumintervall",
+      "allTime": "All tid",
+      "today": "Idag",
+      "thisWeek": "Denna vecka",
+      "thisMonth": "Denna månad"
+    },
+    "actions": {
+      "create": "Skapa Journalanteckning",
+      "createFirst": "Skapa din första journalanteckning",
+      "delete": "Ta bort",
+      "edit": "Redigera"
+    },
+    "deleteDialog": {
+      "title": "Ta bort journalanteckning",
+      "message": "Är du säker på att du vill ta bort denna journalanteckning? Denna åtgärd kan inte ångras.",
+      "confirm": "Ta bort",
+      "cancel": "Avbryt"
+    },
+    "success": {
+      "created": "Journalanteckningen skapades framgångsrikt",
+      "updated": "Journalanteckningen uppdaterades framgångsrikt",
+      "deleted": "Journalanteckningen togs bort framgångsrikt"
+    },
+    "errors": {
+      "notFound": "Journalanteckningen hittades inte",
+      "loadFailed": "Misslyckades med att ladda journaldata",
+      "saveFailed": "Misslyckades med att spara journaldata",
+      "deleteFailed": "Misslyckades med att ta bort journalanteckningen",
+      "noPatient": "Ingen patient angiven för ny journalanteckning"
+    }
+  },
+  "users": {
+    "management": "Användarhantering",
+    "newUser": "Ny Användare",
+    "editUser": "Redigera Användare: {{username}}",
+    "searchPlaceholder": "Sök användare...",
+    "noResults": "Inga användare hittades som matchar din sökning",
+    "empty": "Inga användare hittades",
+    "roles": {
+      "admin": "Administratör",
+      "manager": "Chef",
+      "staff": "Personal"
+    },
+    "status": {
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "locked": "Låst"
+    },
+    "sections": {
+      "basicInfo": "Grundläggande information",
+      "setPassword": "Ange lösenord",
+      "changePassword": "Ändra lösenord",
+      "accountStatus": "Kontostatus"
+    },
+    "fields": {
+      "username": "Användarnamn",
+      "email": "E-post",
+      "firstName": "Förnamn",
+      "lastName": "Efternamn",
+      "role": "Roll",
+      "password": "Lösenord",
+      "passwordConfirmation": "Bekräfta lösenord",
+      "isActive": "Aktiv",
+      "isLocked": "Låst",
+      "status": "Status",
+      "lastLogin": "Senaste inloggning",
+      "createdAt": "Skapad",
+      "actions": "Åtgärder",
+      "sendEmail": "Skicka välkomstmail med inloggningsuppgifter"
+    },
+    "placeholders": {
+      "username": "Ange användarnamn",
+      "email": "epost@exempel.com",
+      "firstName": "Ange förnamn",
+      "lastName": "Ange efternamn",
+      "password": "Ange lösenord",
+      "passwordConfirmation": "Bekräfta lösenord"
+    },
+    "passwordNote": "Lämna tomt för att behålla nuvarande lösenord",
+    "filters": {
+      "allRoles": "Alla Roller",
+      "allStatus": "Alla Status",
+      "sortBy": "Sortera efter",
+      "sortOrder": "Sorteringsordning",
+      "ascending": "A-Ö",
+      "descending": "Ö-A"
+    },
+    "actions": {
+      "create": "Skapa Användare",
+      "createFirst": "Skapa din första användare",
+      "edit": "Redigera",
+      "delete": "Ta bort",
+      "activate": "Aktivera",
+      "deactivate": "Inaktivera",
+      "lock": "Lås",
+      "unlock": "Lås upp"
+    },
+    "deleteDialog": {
+      "title": "Ta bort användare",
+      "message": "Är du säker på att du vill ta bort användaren {{name}}? Denna åtgärd kan inte ångras.",
+      "confirm": "Ta bort",
+      "cancel": "Avbryt"
+    },
+    "success": {
+      "created": "Användaren skapades framgångsrikt",
+      "updated": "Användaren uppdaterades framgångsrikt",
+      "deleted": "Användaren togs bort framgångsrikt",
+      "activated": "Användaren aktiverades framgångsrikt",
+      "deactivated": "Användaren inaktiverades framgångsrikt",
+      "locked": "Användaren låstes framgångsrikt",
+      "unlocked": "Användaren låstes upp framgångsrikt"
+    },
+    "errors": {
+      "notFound": "Användaren hittades inte",
+      "loadFailed": "Misslyckades med att ladda användardata",
+      "saveFailed": "Misslyckades med att spara användardata",
+      "deleteFailed": "Misslyckades med att ta bort användaren",
+      "updateFailed": "Misslyckades med att uppdatera användaren",
+      "unauthorized": "Du är inte behörig att hantera användare"
+    }
+  },
+  "profile": {
+    "title": "Min Profil",
+    "sections": {
+      "info": "Profilinformation",
+      "password": "Ändra lösenord",
+      "account": "Kontoinformation"
+    },
+    "fields": {
+      "currentPassword": "Nuvarande lösenord",
+      "newPassword": "Nytt lösenord",
+      "passwordConfirmation": "Bekräfta nytt lösenord"
+    },
+    "placeholders": {
+      "currentPassword": "Ange nuvarande lösenord",
+      "newPassword": "Ange nytt lösenord",
+      "passwordConfirmation": "Bekräfta nytt lösenord"
+    },
+    "actions": {
+      "changePassword": "Ändra lösenord"
+    },
+    "success": {
+      "updated": "Profilen uppdaterades framgångsrikt",
+      "passwordChanged": "Lösenordet ändrades framgångsrikt"
+    },
+    "errors": {
+      "loadFailed": "Misslyckades med att ladda profildata",
+      "updateFailed": "Misslyckades med att uppdatera profilen",
+      "passwordChangeFailed": "Misslyckades med att ändra lösenord"
+    }
+  },
+  "validation": {
+    "required": "Detta fält är obligatoriskt",
+    "email": "Ange en giltig e-postadress",
+    "minLength": "Måste vara minst {{length}} tecken",
+    "passwordMismatch": "Lösenorden matchar inte"
+  },
+  "error": {
+    "pageTitle": "Fel",
+    "notFound": "Sidan hittades inte",
+    "accessDenied": "Åtkomst nekad",
+    "unauthorized": "Du är inte behörig att komma åt denna sida",
+    "serverError": "Serverfel",
+    "accountLocked": "Ditt konto har blivit låst",
+    "goBack": "Gå tillbaka",
+    "goHome": "Gå till inloggning"
+  },
+  "api": {
+    "errors": {
+      "forbidden": "Du har inte behörighet att komma åt denna resurs",
+      "notFound": "Den begärda resursen hittades inte",
+      "validation": "Vänligen kontrollera dina inmatningsdata",
+      "tooManyRequests": "För många förfrågningar. Försök igen senare",
+      "serverError": "Serverfel. Försök igen senare",
+      "network": "Nätverksfel. Kontrollera din anslutning",
+      "unknown": "Ett okänt fel inträffade"
+    }
+  }
+}

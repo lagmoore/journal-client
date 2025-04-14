@@ -1,0 +1,408 @@
+{
+  "app": {
+    "name": "Vyper Journal",
+    "tagline": "Journal system for foster homes and residential care facilities"
+  },
+  "common": {
+    "back": "Back",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "create": "Create",
+    "delete": "Delete",
+    "edit": "Edit",
+    "loading": "Loading...",
+    "logout": "Logout",
+    "never": "Never",
+    "save": "Save",
+    "saving": "Saving...",
+    "search": "Search",
+    "language": "Language",
+    "theme": {
+      "title": "Theme",
+      "light": "Light Mode",
+      "dark": "Dark Mode"
+    },
+    "error": "Error",
+    "success": "Success"
+  },
+  "auth": {
+    "login": {
+      "title": "Sign in to your account",
+      "emailPlaceholder": "Email",
+      "passwordPlaceholder": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "loginButton": "Sign in",
+      "loginSuccessful": "Successfully signed in"
+    },
+    "forgotPassword": {
+      "title": "Reset your password",
+      "description": "Enter your email to receive a password reset link",
+      "emailPlaceholder": "Email",
+      "submitButton": "Send reset link",
+      "backToLogin": "Back to login",
+      "emailSent": "Password reset instructions sent",
+      "emailSentDescription": "If an account exists with that email, we've sent instructions to reset your password."
+    },
+    "errors": {
+      "invalidCredentials": "Invalid email or password",
+      "loginFailed": "Login failed. Please try again.",
+      "resetRequestFailed": "Failed to request password reset. Please try again.",
+      "initialization": "Failed to initialize authentication."
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome, {{name}}",
+    "stats": {
+      "patients": "Total Patients",
+      "activePatients": "Active Patients",
+      "journals": "Total Journals"
+    },
+    "quickActions": "Quick Actions",
+    "recentJournals": "Recent Journal Entries",
+    "noRecentJournals": "No recent journal entries",
+    "actions": {
+      "viewAll": "View all"
+    },
+    "errors": {
+      "loadFailed": "Failed to load dashboard data"
+    }
+  },
+  "patients": {
+    "title": "Patients",
+    "newPatient": "New Patient",
+    "editPatient": "Edit Patient: {{name}}",
+    "searchPlaceholder": "Search patients...",
+    "noResults": "No patients found matching your search",
+    "empty": "No patients found",
+    "sections": {
+      "personal": "Personal Information",
+      "contact": "Contact Information",
+      "emergency": "Emergency Contact",
+      "notes": "Additional Notes"
+    },
+    "tabs": {
+      "info": "Information",
+      "journals": "Journal Entries"
+    },
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "name": "Name",
+      "personalNumber": "Personal Number",
+      "dateOfBirth": "Date of Birth",
+      "dob": "Date of Birth",
+      "gender": "Gender",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "postalCode": "Postal Code",
+      "city": "City",
+      "country": "Country",
+      "contact": "Contact",
+      "emergencyName": "Emergency Contact Name",
+      "emergencyPhone": "Emergency Contact Phone",
+      "notes": "Notes",
+      "status": "Status",
+      "createdAt": "Created At",
+      "actions": "Actions"
+    },
+    "placeholders": {
+      "firstName": "Enter first name",
+      "lastName": "Enter last name",
+      "personalNumber": "YYYYMMDD-XXXX",
+      "email": "email@example.com",
+      "phone": "Phone number",
+      "address": "Street address",
+      "postalCode": "Postal code",
+      "city": "City",
+      "country": "Country",
+      "emergencyName": "Contact name",
+      "emergencyPhone": "Contact phone",
+      "notes": "Additional notes about the patient"
+    },
+    "gender": {
+      "unspecified": "Unspecified",
+      "male": "Male",
+      "female": "Female",
+      "other": "Other"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "filters": {
+      "status": "Status",
+      "statusOptions": {
+        "all": "All Status",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "sortBy": "Sort By",
+      "sortOptions": {
+        "lastName": "Last Name",
+        "firstName": "First Name",
+        "personalNumber": "Personal Number",
+        "createdAt": "Created Date"
+      },
+      "sortOrder": "Sort Order"
+    },
+    "validation": {
+      "personalNumber": "Invalid personal number format"
+    },
+    "actions": {
+      "add": "Add Patient",
+      "addFirst": "Add your first patient",
+      "view": "View details",
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Activate",
+      "deactivate": "Deactivate"
+    },
+    "deleteDialog": {
+      "title": "Delete Patient",
+      "message": "Are you sure you want to delete the patient {{name}}? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "success": {
+      "created": "Patient created successfully",
+      "updated": "Patient updated successfully",
+      "deleted": "Patient deleted successfully"
+    },
+    "errors": {
+      "notFound": "Patient not found",
+      "loadFailed": "Failed to load patient data",
+      "saveFailed": "Failed to save patient data",
+      "deleteFailed": "Failed to delete patient"
+    }
+  },
+  "journals": {
+    "title": "Journal Entries",
+    "allJournals": "All Journal Entries",
+    "newJournal": "New Journal Entry",
+    "editJournal": "Edit Journal Entry",
+    "forPatient": "For patient",
+    "searchPlaceholder": "Search journal entries...",
+    "noResults": "No journal entries found matching your search",
+    "empty": "No journal entries found",
+    "categories": {
+      "daily": "Daily",
+      "medical": "Medical",
+      "behavioral": "Behavioral",
+      "educational": "Educational",
+      "social": "Social",
+      "other": "Other"
+    },
+    "status": {
+      "draft": "Draft",
+      "completed": "Completed",
+      "archived": "Archived"
+    },
+    "fields": {
+      "title": "Title",
+      "content": "Content",
+      "category": "Category",
+      "status": "Status",
+      "createdBy": "Created by",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at"
+    },
+    "placeholders": {
+      "title": "Enter title",
+      "content": "Enter journal content...",
+      "category": "Select category"
+    },
+    "filters": {
+      "all": "All Status",
+      "draft": "Drafts",
+      "completed": "Completed",
+      "archived": "Archived",
+      "allPatients": "All Patients",
+      "patient": "Patient",
+      "category": "Category",
+      "sortBy": "Sort By",
+      "newest": "Newest First",
+      "oldest": "Oldest First",
+      "patientAZ": "Patient (A-Z)",
+      "patientZA": "Patient (Z-A)",
+      "dateRange": "Date Range",
+      "allTime": "All Time",
+      "today": "Today",
+      "thisWeek": "This Week",
+      "thisMonth": "This Month"
+    },
+    "actions": {
+      "create": "Create Journal",
+      "createFirst": "Create your first journal entry",
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "deleteDialog": {
+      "title": "Delete Journal Entry",
+      "message": "Are you sure you want to delete this journal entry? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "success": {
+      "created": "Journal entry created successfully",
+      "updated": "Journal entry updated successfully",
+      "deleted": "Journal entry deleted successfully"
+    },
+    "errors": {
+      "notFound": "Journal entry not found",
+      "loadFailed": "Failed to load journal data",
+      "saveFailed": "Failed to save journal data",
+      "deleteFailed": "Failed to delete journal entry",
+      "noPatient": "No patient specified for new journal entry"
+    }
+  },
+  "users": {
+    "management": "User Management",
+    "newUser": "New User",
+    "editUser": "Edit User: {{username}}",
+    "searchPlaceholder": "Search users...",
+    "noResults": "No users found matching your search",
+    "empty": "No users found",
+    "roles": {
+      "admin": "Administrator",
+      "manager": "Manager",
+      "staff": "Staff"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "locked": "Locked"
+    },
+    "sections": {
+      "basicInfo": "Basic Information",
+      "setPassword": "Set Password",
+      "changePassword": "Change Password",
+      "accountStatus": "Account Status"
+    },
+    "fields": {
+      "username": "Username",
+      "email": "Email",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "role": "Role",
+      "password": "Password",
+      "passwordConfirmation": "Confirm Password",
+      "isActive": "Active",
+      "isLocked": "Locked",
+      "status": "Status",
+      "lastLogin": "Last Login",
+      "createdAt": "Created At",
+      "actions": "Actions",
+      "sendEmail": "Send welcome email with login credentials"
+    },
+    "placeholders": {
+      "username": "Enter username",
+      "email": "email@example.com",
+      "firstName": "Enter first name",
+      "lastName": "Enter last name",
+      "password": "Enter password",
+      "passwordConfirmation": "Confirm password"
+    },
+    "passwordNote": "Leave blank to keep current password",
+    "filters": {
+      "allRoles": "All Roles",
+      "allStatus": "All Status",
+      "sortBy": "Sort By",
+      "sortOrder": "Sort Order",
+      "ascending": "A-Z",
+      "descending": "Z-A"
+    },
+    "actions": {
+      "create": "Create User",
+      "createFirst": "Create your first user",
+      "edit": "Edit",
+      "delete": "Delete",
+      "activate": "Activate",
+      "deactivate": "Deactivate",
+      "lock": "Lock",
+      "unlock": "Unlock"
+    },
+    "deleteDialog": {
+      "title": "Delete User",
+      "message": "Are you sure you want to delete the user {{name}}? This action cannot be undone.",
+      "confirm": "Delete",
+      "cancel": "Cancel"
+    },
+    "success": {
+      "created": "User created successfully",
+      "updated": "User updated successfully",
+      "deleted": "User deleted successfully",
+      "activated": "User activated successfully",
+      "deactivated": "User deactivated successfully",
+      "locked": "User locked successfully",
+      "unlocked": "User unlocked successfully"
+    },
+    "errors": {
+      "notFound": "User not found",
+      "loadFailed": "Failed to load user data",
+      "saveFailed": "Failed to save user data",
+      "deleteFailed": "Failed to delete user",
+      "updateFailed": "Failed to update user",
+      "unauthorized": "You are not authorized to manage users"
+    }
+  },
+  "profile": {
+    "title": "My Profile",
+    "sections": {
+      "info": "Profile Information",
+      "password": "Change Password",
+      "account": "Account Information"
+    },
+    "fields": {
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "passwordConfirmation": "Confirm New Password"
+    },
+    "placeholders": {
+      "currentPassword": "Enter current password",
+      "newPassword": "Enter new password",
+      "passwordConfirmation": "Confirm new password"
+    },
+    "actions": {
+      "changePassword": "Change Password"
+    },
+    "success": {
+      "updated": "Profile updated successfully",
+      "passwordChanged": "Password changed successfully"
+    },
+    "errors": {
+      "loadFailed": "Failed to load profile data",
+      "updateFailed": "Failed to update profile",
+      "passwordChangeFailed": "Failed to change password"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Please enter a valid email address",
+    "minLength": "Must be at least {{length}} characters",
+    "passwordMismatch": "Passwords do not match"
+  },
+  "error": {
+    "pageTitle": "Error",
+    "notFound": "Page Not Found",
+    "accessDenied": "Access Denied",
+    "unauthorized": "You are not authorized to access this page",
+    "serverError": "Server Error",
+    "accountLocked": "Your account has been locked",
+    "goBack": "Go Back",
+    "goHome": "Go to Login"
+  },
+  "api": {
+    "errors": {
+      "forbidden": "You don't have permission to access this resource",
+      "notFound": "The requested resource was not found",
+      "validation": "Please check your input data",
+      "tooManyRequests": "Too many requests. Please try again later",
+      "serverError": "Server error. Please try again later",
+      "network": "Network error. Please check your connection",
+      "unknown": "An unknown error occurred"
+    }
+  }
+}

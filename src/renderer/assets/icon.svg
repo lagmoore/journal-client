@@ -1,0 +1,11 @@
+<!-- assets/icon.svg -->
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <rect width="256" height="256" fill="#1f5b8e" rx="28" ry="28" />
+  <g fill="#ffffff">
+    <path d="M62 97.5L91.5 68L121 97.5L91.5 127L62 97.5Z" />
+    <path d="M135 97.5L164.5 68L194 97.5L164.5 127L135 97.5Z" />
+    <path d="M98.5 134L128 104.5L157.5 134L128 163.5L98.5 134Z" />
+    <path d="M62 170.5L91.5 141L121 170.5L91.5 200L62 170.5Z" />
+    <path d="M135 170.5L164.5 141L194 170.5L164.5 200L135 170.5Z" />
+  </g>
+</svg>
