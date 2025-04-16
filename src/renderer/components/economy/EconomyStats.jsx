@@ -41,7 +41,7 @@ const EconomyStats = ({ data, year }) => {
             <p className="text-neutral text-sm">{t('economy.stats.actualIncome')}</p>
             <h3 className="text-2xl font-bold mt-1">{formatCurrency(data.actualIncome)}</h3>
             <p className="text-sm mt-2">
-              {t('economy.stats.forYear', { year })}
+              {t('economy.stats.forYear', { year: year })}
             </p>
           </div>
           <div className="bg-primary bg-opacity-10 p-3 rounded-full">

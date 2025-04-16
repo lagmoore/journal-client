@@ -12,7 +12,7 @@ import EconomyForm from '../components/economy/EconomyForm';
 import EconomyStats from '../components/economy/EconomyStats';
 
 const EconomyView = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { currentUser, accessToken } = useAuth();
   
   // State
@@ -32,6 +32,12 @@ const EconomyView = () => {
   // Check if user has permission to edit
   const canEdit = ['admin', 'manager'].includes(currentUser?.role);
   
+  // Get month names from translations
+  const getLocalizedMonthName = (monthNumber) => {
+    // Get month name from translations with proper capitalization
+    return t(`economy.months.${monthNumber}`);
+  };
+
   // Fetch economy data
   useEffect(() => {
     const fetchEconomyData = async () => {
@@ -43,7 +49,16 @@ const EconomyView = () => {
         });
         
         if (response.data.success) {
-          setEconomyData(response.data);
+          // Translate month names based on current language
+          const translatedData = {
+            ...response.data,
+            monthlyData: response.data.monthlyData.map(month => ({
+              ...month,
+              // Use our translation function for month names instead of date formatting
+              monthName: getLocalizedMonthName(month.month)
+            }))
+          };
+          setEconomyData(translatedData);
         } else {
           toast.error(t('economy.errors.loadFailed'));
         }
@@ -56,7 +71,7 @@ const EconomyView = () => {
     };
     
     fetchEconomyData();
-  }, [accessToken, selectedYear, t]);
+  }, [accessToken, selectedYear, t, i18n.language]);
   
   // Handle year change
   const handleYearChange = (year) => {
@@ -87,7 +102,14 @@ const EconomyView = () => {
           );
           
           if (monthIndex !== -1) {
-            updatedMonthlyData[monthIndex] = response.data.data;
+            // Get localized month name from our translations
+            const localizedMonthName = getLocalizedMonthName(formData.month);
+            
+            // Update month data with response and localized month name
+            updatedMonthlyData[monthIndex] = {
+              ...response.data.data,
+              monthName: localizedMonthName
+            };
           }
           
           // Recalculate totals

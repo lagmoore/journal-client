@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import FormInput from '../FormInput';
 
 const EconomyForm = ({ isOpen, onClose, onSubmit, initialData }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   // Form state
   const [formData, setFormData] = useState({
@@ -74,6 +74,11 @@ const EconomyForm = ({ isOpen, onClose, onSubmit, initialData }) => {
     }
   };
   
+  // Get localized month name from translations
+  const getLocalizedMonthName = () => {
+    return t(`economy.months.${initialData.month}`);
+  };
+  
   if (!isOpen) return null;
   
   return (
@@ -91,7 +96,7 @@ const EconomyForm = ({ isOpen, onClose, onSubmit, initialData }) => {
               <div className="sm:flex sm:items-start">
                 <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
                   <h3 className="text-lg leading-6 font-medium text-base-content mb-4">
-                    {t('economy.editData', { month: initialData.monthName, year: initialData.year })}
+                    {t('economy.editData', { month: getLocalizedMonthName(), year: initialData.year })}
                   </h3>
                   
                   <div className="mt-2 space-y-4">
