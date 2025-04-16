@@ -18,13 +18,18 @@ const JournalDetailView = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Extract patientId from query params if creating new journal
+  // Extract patientId and entryType from query params if creating new journal
   const queryParams = new URLSearchParams(location.search);
   const patientIdFromQuery = queryParams.get('patientId');
+  const entryTypeFromQuery = queryParams.get('entryType') || 'note';
+  
+  // Get initial data from location state if provided
+  const initialDataFromState = location.state?.initialData;
   
   // State
   const [journal, setJournal] = useState(null);
   const [patient, setPatient] = useState(null);
+  const [medications, setMedications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
@@ -50,14 +55,36 @@ const JournalDetailView = () => {
           if (patientResponse.data.success) {
             setPatient(patientResponse.data.patient);
             
+            // If creating a medication entry, fetch medications
+            if (entryTypeFromQuery === 'medication') {
+              const medicationsResponse = await api.get(`/patients/${patientIdFromQuery}/medications/active`, {
+                headers: { Authorization: `Bearer ${accessToken}` }
+              });
+              
+              if (medicationsResponse.data.success) {
+                setMedications(medicationsResponse.data.medications);
+              }
+            }
+            
             // Create new journal object
-            setJournal({
-              patientId: patientIdFromQuery,
-              title: '',
-              content: '',
-              category: '',
-              status: 'draft',
-            });
+            if (initialDataFromState) {
+              // Use provided initial data
+              setJournal({
+                ...initialDataFromState,
+                patientId: patientIdFromQuery,
+                status: 'draft',
+              });
+            } else {
+              // Create default journal object
+              setJournal({
+                patientId: patientIdFromQuery,
+                title: '',
+                content: '',
+                category: '',
+                status: 'draft',
+                entryType: entryTypeFromQuery,
+              });
+            }
           } else {
             toast.error(t('patients.errors.notFound'));
             navigate('/dashboard/patients');
@@ -81,15 +108,27 @@ const JournalDetailView = () => {
         });
         
         if (journalResponse.data.success) {
-          setJournal(journalResponse.data.journal);
+          const journalData = journalResponse.data.journal;
+          setJournal(journalData);
           
           // Fetch patient
-          const patientResponse = await api.get(`/patients/${journalResponse.data.journal.patientId}`, {
+          const patientResponse = await api.get(`/patients/${journalData.patientId}`, {
             headers: { Authorization: `Bearer ${accessToken}` }
           });
           
           if (patientResponse.data.success) {
             setPatient(patientResponse.data.patient);
+            
+            // If it's a medication entry, fetch medications
+            if (journalData.entryType === 'medication') {
+              const medicationsResponse = await api.get(`/patients/${journalData.patientId}/medications`, {
+                headers: { Authorization: `Bearer ${accessToken}` }
+              });
+              
+              if (medicationsResponse.data.success) {
+                setMedications(medicationsResponse.data.medications);
+              }
+            }
           }
         } else {
           toast.error(t('journals.errors.notFound'));
@@ -105,7 +144,7 @@ const JournalDetailView = () => {
     };
     
     fetchData();
-  }, [accessToken, journalId, navigate, t, isNewJournal, patientIdFromQuery]);
+  }, [accessToken, journalId, navigate, t, isNewJournal, patientIdFromQuery, entryTypeFromQuery, initialDataFromState]);
   
   // Save journal
   const handleSaveJournal = async (formData) => {
@@ -180,6 +219,11 @@ const JournalDetailView = () => {
     }
   };
   
+  // Get entry type display name
+  const getEntryTypeDisplayName = (type) => {
+    return t(`journals.entryTypes.${type || 'note'}`);
+  };
+  
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -201,9 +245,14 @@ const JournalDetailView = () => {
             </button>
             <h1 className="text-2xl font-bold">
               {isNewJournal 
-                ? t('journals.newJournal') 
+                ? t(`journals.new.${journal.entryType || 'note'}`)
                 : journal.title}
             </h1>
+            {!isNewJournal && (
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-primary bg-opacity-10 text-primary text-sm font-medium">
+                {getEntryTypeDisplayName(journal.entryType)}
+              </span>
+            )}
           </div>
           {patient && (
             <p className="text-neutral ml-8">
@@ -229,6 +278,7 @@ const JournalDetailView = () => {
         <div className="p-6">
           <JournalForm
             journal={journal}
+            medications={medications}
             onSave={handleSaveJournal}
             isNew={isNewJournal}
           />

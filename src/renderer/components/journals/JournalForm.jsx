@@ -3,7 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import FormInput from '../FormInput';
 
-const JournalForm = ({ journal, onSave, isNew }) => {
+// Import specialized form components for each entry type
+import MedicationEntryForm from './MedicationEntryForm';
+import DrugTestEntryForm from './DrugTestEntryForm';
+import IncidentEntryForm from './IncidentEntryForm';
+
+const JournalForm = ({ journal, medications, onSave, isNew }) => {
   const { t } = useTranslation();
   
   // Form state
@@ -11,6 +16,9 @@ const JournalForm = ({ journal, onSave, isNew }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [isDirty, setIsDirty] = useState(false);
+  
+  // Determine the entry type - default to 'note' if not specified
+  const entryType = formData.entryType || 'note';
   
   // Available categories
   const categories = [
@@ -33,6 +41,15 @@ const JournalForm = ({ journal, onSave, isNew }) => {
     setIsDirty(true);
   };
   
+  // Handle specialized form change
+  const handleSpecializedFormChange = (data) => {
+    setFormData(prev => ({
+      ...prev,
+      ...data
+    }));
+    setIsDirty(true);
+  };
+  
   // Validate form
   const validateForm = () => {
     const errors = {};
@@ -41,8 +58,49 @@ const JournalForm = ({ journal, onSave, isNew }) => {
       errors.title = t('validation.required');
     }
     
-    if (!formData.content?.trim()) {
-      errors.content = t('validation.required');
+    // Validate based on entry type
+    switch (entryType) {
+      case 'note':
+        if (!formData.content?.trim()) {
+          errors.content = t('validation.required');
+        }
+        break;
+        
+      case 'medication':
+        if (!formData.medicationName) {
+          errors.medicationName = t('validation.required');
+        }
+        if (!formData.medicationDose) {
+          errors.medicationDose = t('validation.required');
+        }
+        break;
+        
+      case 'drug_test':
+        if (!formData.testType) {
+          errors.testType = t('validation.required');
+        }
+        if (!formData.testMethod) {
+          errors.testMethod = t('validation.required');
+        }
+        if (!formData.testResult) {
+          errors.testResult = t('validation.required');
+        }
+        // Require positive substances for positive non-breath test
+        if (formData.testResult === 'positive' && 
+            formData.testMethod !== 'utandning' && 
+            (!formData.positiveSubstances || formData.positiveSubstances.length === 0)) {
+          errors.positiveSubstances = t('journals.drugTest.errorRequiredSubstances');
+        }
+        break;
+        
+      case 'incident':
+        if (!formData.incidentSeverity) {
+          errors.incidentSeverity = t('validation.required');
+        }
+        if (!formData.incidentDetails?.trim()) {
+          errors.incidentDetails = t('validation.required');
+        }
+        break;
     }
     
     setFormErrors(errors);
@@ -83,14 +141,78 @@ const JournalForm = ({ journal, onSave, isNew }) => {
     setIsDirty(true);
   };
   
+  // Render appropriate form based on entry type
+  const renderEntryTypeForm = () => {
+    switch (entryType) {
+      case 'medication':
+        return (
+          <MedicationEntryForm
+            formData={formData}
+            medications={medications}
+            onChange={handleSpecializedFormChange}
+            errors={formErrors}
+          />
+        );
+        
+      case 'drug_test':
+        return (
+          <DrugTestEntryForm
+            formData={formData}
+            onChange={handleSpecializedFormChange}
+            errors={formErrors}
+          />
+        );
+        
+      case 'incident':
+        return (
+          <IncidentEntryForm
+            formData={formData}
+            onChange={handleSpecializedFormChange}
+            errors={formErrors}
+          />
+        );
+        
+      case 'note':
+      default:
+        return (
+          <div className="mb-4">
+            <label className="block text-sm font-medium mb-1">
+              {t('journals.fields.content')}
+              <span className="text-error ml-1">*</span>
+            </label>
+            <textarea
+              name="content"
+              rows="12"
+              value={formData.content || ''}
+              onChange={handleChange}
+              placeholder={t('journals.placeholders.content')}
+              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                formErrors.content ? 'border-error' : 'border-base-300'
+              }`}
+            ></textarea>
+            {formErrors.content && (
+              <p className="text-error text-sm mt-1">{formErrors.content}</p>
+            )}
+          </div>
+        );
+    }
+  };
+  
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Entry type indicator (for existing journals) */}
+      {!isNew && (
+        <div className="inline-flex items-center px-3 py-1 rounded-full bg-primary bg-opacity-10 text-primary text-sm font-medium">
+          {t(`journals.entryTypes.${entryType}`)}
+        </div>
+      )}
+      
       {/* Journal details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormInput
           type="text"
           name="title"
-          value={formData.title}
+          value={formData.title || ''}
           onChange={handleChange}
           label={t('journals.fields.title')}
           placeholder={t('journals.placeholders.title')}
@@ -118,26 +240,8 @@ const JournalForm = ({ journal, onSave, isNew }) => {
         </div>
       </div>
       
-      {/* Journal content */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium mb-1">
-          {t('journals.fields.content')}
-          <span className="text-error ml-1">*</span>
-        </label>
-        <textarea
-          name="content"
-          rows="12"
-          value={formData.content}
-          onChange={handleChange}
-          placeholder={t('journals.placeholders.content')}
-          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-            formErrors.content ? 'border-error' : 'border-base-300'
-          }`}
-        ></textarea>
-        {formErrors.content && (
-          <p className="text-error text-sm mt-1">{formErrors.content}</p>
-        )}
-      </div>
+      {/* Type-specific form */}
+      {renderEntryTypeForm()}
       
       {/* Status buttons - only show for existing journals */}
       {!isNew && (
