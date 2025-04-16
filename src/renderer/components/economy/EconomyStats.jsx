@@ -3,7 +3,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 
 const EconomyStats = ({ data, year }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   // Format currency
   const formatCurrency = (value) => {
@@ -31,6 +31,9 @@ const EconomyStats = ({ data, year }) => {
   
   // Determine if we're on budget
   const isBudgetMet = data.actualIncome >= data.budget;
+
+  // Format year text directly without using i18next for now
+  const yearText = i18n.language === 'sv' ? `För ${year}` : `For ${year}`;
   
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -41,7 +44,7 @@ const EconomyStats = ({ data, year }) => {
             <p className="text-neutral text-sm">{t('economy.stats.actualIncome')}</p>
             <h3 className="text-2xl font-bold mt-1">{formatCurrency(data.actualIncome)}</h3>
             <p className="text-sm mt-2">
-              {t('economy.stats.forYear', { year: year })}
+              {yearText}
             </p>
           </div>
           <div className="bg-primary bg-opacity-10 p-3 rounded-full">
@@ -74,7 +77,7 @@ const EconomyStats = ({ data, year }) => {
             <p className="text-neutral text-sm">{t('economy.stats.yearlyBudget')}</p>
             <h3 className="text-2xl font-bold mt-1">{formatCurrency(data.budget)}</h3>
             <p className="text-sm mt-2">
-              {t('economy.stats.forYear', { year })}
+              {yearText}
             </p>
           </div>
           <div className="bg-secondary bg-opacity-10 p-3 rounded-full">
@@ -106,7 +109,7 @@ const EconomyStats = ({ data, year }) => {
             <p className="text-neutral text-sm">{t('economy.stats.predictedIncome')}</p>
             <h3 className="text-2xl font-bold mt-1">{formatCurrency(data.predictedIncome)}</h3>
             <p className="text-sm mt-2">
-              {t('economy.stats.forYear', { year })}
+              {yearText}
             </p>
           </div>
           <div className="bg-info bg-opacity-10 p-3 rounded-full">

@@ -75,7 +75,7 @@ const EconomyView = () => {
   
   // Handle year change
   const handleYearChange = (year) => {
-    setSelectedYear(year);
+    setSelectedYear(parseInt(year, 10));
   };
   
   // Handle edit click
@@ -168,7 +168,7 @@ const EconomyView = () => {
             id="year-select"
             className="px-3 py-2 border border-base-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
             value={selectedYear}
-            onChange={(e) => handleYearChange(parseInt(e.target.value))}
+            onChange={(e) => handleYearChange(e.target.value)}
           >
             {getAvailableYears().map(year => (
               <option key={year} value={year}>{year}</option>
@@ -177,7 +177,7 @@ const EconomyView = () => {
         </div>
       </div>
       
-      {/* Stats cards */}
+      {/* Stats cards - pass the selectedYear explicitly */}
       <EconomyStats data={economyData.totals} year={selectedYear} />
       
       {/* Chart */}
