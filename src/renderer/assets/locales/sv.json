@@ -16,6 +16,7 @@
     "save": "Spara",
     "saving": "Sparar...",
     "search": "Sök",
+    "searchPlaceholder": "Sök patienter, journaler...",
     "language": "Språk",
     "theme": {
       "title": "Tema",
@@ -80,7 +81,10 @@
       "personal": "Personlig Information",
       "contact": "Kontaktinformation",
       "emergency": "Nödkontakt",
-      "notes": "Ytterligare anteckningar"
+      "notes": "Ytterligare anteckningar",
+      "care": "Vårdinformation",
+      "importantNote": "Viktiga anteckningar",
+      "caseworker": "Handläggare"
     },
     "tabs": {
       "info": "Information",
@@ -106,7 +110,22 @@
       "notes": "Anteckningar",
       "status": "Status",
       "createdAt": "Skapad",
-      "actions": "Åtgärder"
+      "actions": "Åtgärder",
+      
+      "admissionDate": "Inskrivningsdatum",
+      "expectedDischargeDate": "Förväntat utskrivningsdatum",
+      "actualDischargeDate": "Faktiskt utskrivningsdatum",
+      "dailyCost": "Kostnad per dag (SEK)",
+      "agreement": "Avtal",
+      
+      "importantNote": "Viktig notering",
+      "importantNoteType": "Noteringstyp",
+      
+      "caseworkerFirstName": "Handläggare förnamn",
+      "caseworkerLastName": "Handläggare efternamn",
+      "caseworkerMunicipality": "Kommun",
+      "caseworkerPhone": "Handläggare telefon",
+      "caseworkerEmail": "Handläggare e-post"
     },
     "placeholders": {
       "firstName": "Ange förnamn",
@@ -120,7 +139,24 @@
       "country": "Land",
       "emergencyName": "Kontaktens namn",
       "emergencyPhone": "Kontaktens telefon",
-      "notes": "Ytterligare anteckningar om patienten"
+      "notes": "Ytterligare anteckningar om patienten",
+      
+      "dailyCost": "Kostnad per dag",
+      "agreement": "Avtalsreferens",
+      "importantNote": "Viktig information som bör framhävas",
+      
+      "caseworkerFirstName": "Förnamn",
+      "caseworkerLastName": "Efternamn",
+      "caseworkerMunicipality": "Kommun",
+      "caseworkerPhone": "Telefonnummer",
+      "caseworkerEmail": "epost@exempel.com"
+    },
+    "importantNote": {
+      "title": "Viktig Notering",
+      "selectType": "Välj noteringstyp",
+      "information": "Information",
+      "moderate": "Varning",
+      "severe": "Kritisk"
     },
     "gender": {
       "unspecified": "Ospecificerad",
@@ -231,7 +267,8 @@
       "allTime": "All tid",
       "today": "Idag",
       "thisWeek": "Denna vecka",
-      "thisMonth": "Denna månad"
+      "thisMonth": "Denna månad",
+      "status": "Status"
     },
     "actions": {
       "create": "Skapa Journalanteckning",
@@ -382,7 +419,12 @@
     "required": "Detta fält är obligatoriskt",
     "email": "Ange en giltig e-postadress",
     "minLength": "Måste vara minst {{length}} tecken",
-    "passwordMismatch": "Lösenorden matchar inte"
+    "passwordMismatch": "Lösenorden matchar inte",
+    "phone": "Ange ett giltigt telefonnummer",
+    "postalCode": "Ange ett giltigt postnummer",
+    "formErrors": "Åtgärda felen i formuläret för att fortsätta",
+    "backendErrors": "Viss information kunde inte sparas. Kontrollera formuläret",
+    "positiveNumber": "Ange ett positivt nummer"
   },
   "error": {
     "pageTitle": "Fel",
@@ -404,5 +446,13 @@
       "network": "Nätverksfel. Kontrollera din anslutning",
       "unknown": "Ett okänt fel inträffade"
     }
+  },
+  "search": {
+    "title": "Sökresultat",
+    "patients": "Patienter",
+    "journals": "Journalanteckningar",
+    "users": "Användare",
+    "noResults": "Inga resultat hittades",
+    "searchForSomething": "Sök efter patienter, journaler eller användare"
   }
 }
