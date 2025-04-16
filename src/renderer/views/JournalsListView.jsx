@@ -84,8 +84,8 @@ const JournalsListView = () => {
       }
     }
     
-    // Apply patient filter
-    if (filters.patientId !== 'all' && journal.patientId !== filters.patientId) {
+    // Apply patient filter - FIX: Convert patientId to string for comparison
+    if (filters.patientId !== 'all' && String(journal.patientId) !== String(filters.patientId)) {
       return false;
     }
     

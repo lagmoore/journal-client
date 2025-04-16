@@ -121,7 +121,7 @@ const PatientJournals = ({ journals, patientId, onCreateJournal }) => {
                     
                     {journal.category && (
                       <p className="text-sm text-neutral mt-1">
-                        {t('journals.fields.category')}: {journal.category}
+                        {t('journals.fields.category')}: {journal.category ? t(`journals.categories.${journal.category}`) : '-'}
                       </p>
                     )}
                     
