@@ -53,7 +53,7 @@
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Hem",
     "welcome": "Välkommen, {{name}}",
     "stats": {
       "patients": "Alla Patienter",
@@ -215,7 +215,7 @@
     }
   },
   "journals": {
-    "title": "Journalanteckningar",
+    "title": "Journal",
     "allJournals": "Alla Journalanteckningar",
     "newJournal": "Ny Journalanteckning",
     "editJournal": "Redigera Journalanteckning",

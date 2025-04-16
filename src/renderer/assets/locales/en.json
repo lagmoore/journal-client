@@ -53,7 +53,7 @@
     }
   },
   "dashboard": {
-    "title": "Dashboard",
+    "title": "Home",
     "welcome": "Welcome, {{name}}",
     "stats": {
       "patients": "Total Patients",
@@ -215,7 +215,7 @@
     }
   },
   "journals": {
-    "title": "Journal Entries",
+    "title": "Journal",
     "allJournals": "All Journal Entries",
     "newJournal": "New Journal Entry",
     "editJournal": "Edit Journal Entry",
