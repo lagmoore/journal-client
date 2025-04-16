@@ -8,6 +8,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { LANGUAGES, changeLanguage } from '../utils/i18n';
 
+// Import components
+import GlobalSearch from '../components/GlobalSearch';
+
 // Import views
 import DashboardHome from './DashboardHome';
 import PatientListView from './PatientListView';
@@ -17,6 +20,8 @@ import JournalDetailView from './JournalDetailView';
 import UserManagementView from './UserManagementView';
 import UserDetailView from './UserDetailView';
 import ProfileView from './ProfileView';
+import SearchResultsView from './SearchResultsView';
+import EconomyView from './EconomyView';
 
 const DashboardView = () => {
   const { t, i18n } = useTranslation();
@@ -36,6 +41,8 @@ const DashboardView = () => {
     if (path.includes('/journals')) return 'journals';
     if (path.includes('/users')) return 'users';
     if (path.includes('/profile')) return 'profile';
+    if (path.includes('/search')) return 'search';
+    if (path.includes('/economy')) return 'economy';
     return 'dashboard';
   };
   
@@ -155,6 +162,28 @@ const DashboardView = () => {
               {t('journals.title')}
             </button>
             
+            {/* Economy link - restricted to admin and manager roles */}
+            {(currentUser?.role === 'admin' || currentUser?.role === 'manager') && (
+              <button
+                onClick={() => navigate('/dashboard/economy')}
+                className={`group w-full flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                  activeSection === 'economy'
+                    ? 'bg-primary text-white'
+                    : 'text-base-content hover:bg-base-300'
+                }`}
+              >
+                <svg className={`mr-3 h-6 w-6 ${activeSection === 'economy' ? 'text-white' : 'text-primary'}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                {t('economy.title')}
+              </button>
+            )}
+            
             {/* Admin links */}
             {currentUser?.role === 'admin' && (
               <button
@@ -206,38 +235,44 @@ const DashboardView = () => {
               </svg>
             </button>
             
-            {/* Mobile title */}
-            <div className="lg:hidden font-medium">
-              {activeSection === 'dashboard' && t('dashboard.title')}
-              {activeSection === 'patients' && t('patients.title')}
-              {activeSection === 'journals' && t('journals.title')}
-              {activeSection === 'users' && t('users.management')}
-              {activeSection === 'profile' && t('profile.title')}
+            {/* Mobile title - hide when on search page */}
+            {activeSection !== 'search' && (
+              <div className="lg:hidden font-medium">
+                {activeSection === 'dashboard' && t('dashboard.title')}
+                {activeSection === 'patients' && t('patients.title')}
+                {activeSection === 'journals' && t('journals.title')}
+                {activeSection === 'users' && t('users.management')}
+                {activeSection === 'profile' && t('profile.title')}
+                {activeSection === 'economy' && t('economy.title')}
+              </div>
+            )}
+            
+            {/* Mobile search button */}
+            <div className="lg:hidden">
+              <button
+                onClick={() => navigate('/dashboard/search')}
+                className="p-2 rounded-md text-neutral focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary"
+                aria-label={t('common.search')}
+              >
+                <svg
+                  className="h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </button>
             </div>
             
-            {/* Desktop search */}
+            {/* Desktop Global search */}
             <div className="hidden lg:block flex-1 px-4 max-w-md">
-              <div className="relative w-full">
-                <input
-                  type="text"
-                  placeholder={t('common.search')}
-                  className="w-full pl-10 pr-4 py-2 rounded-md border border-base-300 bg-base-100 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                />
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <svg
-                    className="h-5 w-5 text-neutral"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-              </div>
+              <GlobalSearch />
             </div>
             
             {/* User menu */}
@@ -346,6 +381,8 @@ const DashboardView = () => {
             <Route path="users" element={<UserManagementView />} />
             <Route path="users/:userId" element={<UserDetailView />} />
             <Route path="profile" element={<ProfileView />} />
+            <Route path="search" element={<SearchResultsView />} />
+            <Route path="economy" element={<EconomyView />} />
             <Route path="*" element={<Navigate to="/error" replace />} />
           </Routes>
         </main>

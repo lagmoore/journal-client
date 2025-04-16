@@ -98,9 +98,9 @@ const PatientInfo = ({ patient, onSave, isNew }) => {
     }
     
     // Validate daily cost if provided
-    if (formData.dailyCost?.toString().trim()) {
-      if (isNaN(parseFloat(formData.dailyCost)) || parseFloat(formData.dailyCost) < 0) {
-        errors.dailyCost = t('validation.positiveNumber');
+    if (formData.incomePerDay ?.toString().trim()) {
+      if (isNaN(parseFloat(formData.incomePerDay )) || parseFloat(formData.incomePerDay ) < 0) {
+        errors.incomePerDay  = t('validation.positiveNumber');
       }
     }
     
@@ -303,12 +303,12 @@ const PatientInfo = ({ patient, onSave, isNew }) => {
             
             <FormInput
               type="number"
-              name="dailyCost"
-              value={formData.dailyCost || ''}
+              name="incomePerDay"
+              value={formData.incomePerDay || ''}
               onChange={handleChange}
-              label={t('patients.fields.dailyCost')}
-              placeholder={t('patients.placeholders.dailyCost')}
-              errorMessage={formErrors.dailyCost}
+              label={t('patients.fields.incomePerDay')}
+              placeholder={t('patients.placeholders.incomePerDay')}
+              errorMessage={formErrors.incomePerDay}
               step="0.01"
               min="0"
             />

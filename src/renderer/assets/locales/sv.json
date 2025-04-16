@@ -115,7 +115,7 @@
       "admissionDate": "Inskrivningsdatum",
       "expectedDischargeDate": "Förväntat utskrivningsdatum",
       "actualDischargeDate": "Faktiskt utskrivningsdatum",
-      "dailyCost": "Kostnad per dag (SEK)",
+      "incomePerDay": "Intäkter per dag (SEK)",
       "agreement": "Avtal",
       
       "importantNote": "Viktig notering",
@@ -141,7 +141,7 @@
       "emergencyPhone": "Kontaktens telefon",
       "notes": "Ytterligare anteckningar om patienten",
       
-      "dailyCost": "Kostnad per dag",
+      "incomePerDay": "Intäkter per dag",
       "agreement": "Avtalsreferens",
       "importantNote": "Viktig information som bör framhävas",
       

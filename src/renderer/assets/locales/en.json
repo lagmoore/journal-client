@@ -115,7 +115,7 @@
       "admissionDate": "Admission Date",
       "expectedDischargeDate": "Expected Discharge Date",
       "actualDischargeDate": "Actual Discharge Date",
-      "dailyCost": "Daily Cost (SEK)",
+      "incomePerDay": "Income per day (SEK)",
       "agreement": "Agreement",
       
       "importantNote": "Important Note",
@@ -141,7 +141,7 @@
       "emergencyPhone": "Contact phone",
       "notes": "Additional notes about the patient",
       
-      "dailyCost": "Cost per day",
+      "incomePerDay": "Income per day",
       "agreement": "Agreement reference",
       "importantNote": "Important information that should be highlighted",
       
