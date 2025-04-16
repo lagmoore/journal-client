@@ -24,7 +24,11 @@
       "dark": "Dark Mode"
     },
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "positive": "Positive",
+    "negative": "Negative"
   },
   "auth": {
     "login": {
@@ -88,7 +92,8 @@
     },
     "tabs": {
       "info": "Information",
-      "journals": "Journal Entries"
+      "journals": "Journal Entries",
+      "medications": "Medications"
     },
     "fields": {
       "firstName": "First Name",
@@ -111,16 +116,16 @@
       "status": "Status",
       "createdAt": "Created At",
       "actions": "Actions",
-      
+
       "admissionDate": "Admission Date",
       "expectedDischargeDate": "Expected Discharge Date",
       "actualDischargeDate": "Actual Discharge Date",
       "incomePerDay": "Income per day (SEK)",
       "agreement": "Agreement",
-      
+
       "importantNote": "Important Note",
       "importantNoteType": "Note Type",
-      
+
       "caseworkerFirstName": "Caseworker First Name",
       "caseworkerLastName": "Caseworker Last Name",
       "caseworkerMunicipality": "Municipality",
@@ -140,11 +145,11 @@
       "emergencyName": "Contact name",
       "emergencyPhone": "Contact phone",
       "notes": "Additional notes about the patient",
-      
+
       "incomePerDay": "Income per day",
       "agreement": "Agreement reference",
       "importantNote": "Important information that should be highlighted",
-      
+
       "caseworkerFirstName": "First name",
       "caseworkerLastName": "Last name",
       "caseworkerMunicipality": "Municipality",
@@ -212,6 +217,33 @@
       "loadFailed": "Failed to load patient data",
       "saveFailed": "Failed to save patient data",
       "deleteFailed": "Failed to delete patient"
+    },
+    "medications": {
+      "title": "Medications",
+      "active": "Active Medications",
+      "inactive": "Inactive Medications",
+      "add": "Add Medication",
+      "edit": "Edit Medication",
+      "name": "Medication Name",
+      "standardDose": "Standard Dose",
+      "frequency": "Frequency",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "dateRange": "Date Range",
+      "instructions": "Instructions",
+      "namePlaceholder": "Enter medication name",
+      "standardDosePlaceholder": "Enter standard dose",
+      "frequencyPlaceholder": "Enter frequency",
+      "instructionsPlaceholder": "Enter special instructions or notes",
+      "noMedications": "No medications found",
+      "addFirst": "Add your first medication",
+      "createSuccess": "Medication added successfully",
+      "updateSuccess": "Medication updated successfully",
+      "deleteSuccess": "Medication deleted successfully",
+      "createError": "Failed to add medication",
+      "updateError": "Failed to update medication",
+      "deleteError": "Failed to delete medication",
+      "confirmDelete": "Are you sure you want to delete this medication?"
     }
   },
   "journals": {
@@ -223,6 +255,29 @@
     "searchPlaceholder": "Search journal entries...",
     "noResults": "No journal entries found matching your search",
     "empty": "No journal entries found",
+    "medicationAdministered": "Medication Administered",
+    "activeMedications": "Active Medications",
+    "actions": {
+      "addMedication": "Add Medication",
+      "create": "Create Journal",
+      "createFirst": "Create your first journal entry",
+      "delete": "Delete",
+      "edit": "Edit"
+    },
+    "entryTypes": {
+      "note": "Note",
+      "medication": "Medication",
+      "drugTest": "Drug Test",
+      "drug_test": "Drug Test",
+      "incident": "Incident",
+      "all": "All Types"
+    },
+    "new": {
+      "note": "New Note",
+      "medication": "New Medication Entry",
+      "drug_test": "New Drug Test",
+      "incident": "New Incident Report"
+    },
     "categories": {
       "daily": "Daily",
       "medical": "Medical",
@@ -268,13 +323,9 @@
       "today": "Today",
       "thisWeek": "This Week",
       "thisMonth": "This Month",
-      "status": "Status"
-    },
-    "actions": {
-      "create": "Create Journal",
-      "createFirst": "Create your first journal entry",
-      "delete": "Delete",
-      "edit": "Edit"
+      "thisYear": "This Year",
+      "status": "Status",
+      "allTypes": "All Entry Types"
     },
     "deleteDialog": {
       "title": "Delete Journal Entry",
@@ -293,6 +344,73 @@
       "saveFailed": "Failed to save journal data",
       "deleteFailed": "Failed to delete journal entry",
       "noPatient": "No patient specified for new journal entry"
+    },
+    "medication": {
+      "title": "Medication Administration",
+      "medicationName": "Medication Name",
+      "medicationNamePlaceholder": "Enter medication name",
+      "existingMedication": "Choose Existing Medication",
+      "newMedication": "New Medication",
+      "selectMedication": "Select Medication",
+      "dose": "Dose",
+      "dosePlaceholder": "Enter dose",
+      "time": "Administration Time",
+      "notes": "Notes",
+      "notesPlaceholder": "Additional notes about medication administration"
+    },
+    "drugTest": {
+      "title": "Drug Test",
+      "defaultTitle": "Drug Test Results",
+      "testType": "Test Type",
+      "testMethod": "Test Method",
+      "testResult": "Test Result",
+      "selectTestType": "Select test type",
+      "selectTestMethod": "Select test method",
+      "positiveSubstances": "Positive Substances",
+      "selectedSubstances": "Selected Substances",
+      "addSubstancePlaceholder": "Type substance name and press Enter",
+      "pressEnterToAdd": "Press Enter to add",
+      "notes": "Notes",
+      "notesPlaceholder": "Additional notes about the test",
+      "errorRequiredSubstances": "Please select at least one substance",
+      "types": {
+        "droger": "Drugs",
+        "alkohol": "Alcohol",
+        "kombinerat": "Combined"
+      },
+      "methods": {
+        "urin": "Urine",
+        "utandning": "Breath",
+        "blod": "Blood",
+        "saliv": "Saliva"
+      },
+      "substances": {
+        "cannabis": "Cannabis",
+        "amfetamin": "Amphetamine",
+        "kokain": "Cocaine",
+        "bensodiazepiner": "Benzodiazepines",
+        "opiater": "Opiates",
+        "tramadol": "Tramadol",
+        "fentanyl": "Fentanyl",
+        "MDMA": "MDMA",
+        "metadon": "Methadone",
+        "buprenorfin": "Buprenorphine"
+      }
+    },
+    "incident": {
+      "title": "Incident Report",
+      "defaultTitle": "Incident Report",
+      "severity": {
+        "title": "Severity Level",
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "details": "Incident Details",
+      "detailsPlaceholder": "Describe what happened, who was involved, and any immediate actions taken",
+      "detailsHelp": "Include as much relevant information as possible",
+      "followUpActions": "Follow-up Actions",
+      "followUpActionsPlaceholder": "Describe any follow-up actions planned or taken"
     }
   },
   "users": {
@@ -424,7 +542,8 @@
     "postalCode": "Please enter a valid postal code",
     "formErrors": "Please fix the form errors to continue",
     "backendErrors": "Some information could not be saved. Please check the form",
-    "positiveNumber": "Please enter a positive number"
+    "positiveNumber": "Please enter a positive number",
+    "endDateAfterStart": "End date must be after start date"
   },
   "error": {
     "pageTitle": "Error",
@@ -490,19 +609,19 @@
       "matchingPrediction": "Matching prediction"
     },
     "months": {
-    "1": "January",
-    "2": "February",
-    "3": "March",
-    "4": "April",
-    "5": "May",
-    "6": "June",
-    "7": "July",
-    "8": "August",
-    "9": "September",
-    "10": "October",
-    "11": "November",
-    "12": "December"
-  },
+      "1": "January",
+      "2": "February",
+      "3": "March",
+      "4": "April",
+      "5": "May",
+      "6": "June",
+      "7": "July",
+      "8": "August",
+      "9": "September",
+      "10": "October",
+      "11": "November",
+      "12": "December"
+    },
     "success": {
       "updated": "Economy data updated successfully"
     },

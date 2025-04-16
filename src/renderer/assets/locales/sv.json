@@ -24,7 +24,11 @@
       "dark": "Mörkt läge"
     },
     "error": "Fel",
-    "success": "Framgång"
+    "success": "Framgång",
+    "today": "Idag",
+    "yesterday": "Igår",
+    "positive": "Positiv",
+    "negative": "Negativ"
   },
   "auth": {
     "login": {
@@ -88,7 +92,8 @@
     },
     "tabs": {
       "info": "Information",
-      "journals": "Journalanteckningar"
+      "journals": "Journalanteckningar",
+      "medications": "Mediciner"
     },
     "fields": {
       "firstName": "Förnamn",
@@ -111,16 +116,16 @@
       "status": "Status",
       "createdAt": "Skapad",
       "actions": "Åtgärder",
-      
+
       "admissionDate": "Inskrivningsdatum",
       "expectedDischargeDate": "Förväntat utskrivningsdatum",
       "actualDischargeDate": "Faktiskt utskrivningsdatum",
       "incomePerDay": "Intäkter per dag (SEK)",
       "agreement": "Avtal",
-      
+
       "importantNote": "Viktig notering",
       "importantNoteType": "Noteringstyp",
-      
+
       "caseworkerFirstName": "Handläggare förnamn",
       "caseworkerLastName": "Handläggare efternamn",
       "caseworkerMunicipality": "Kommun",
@@ -140,11 +145,11 @@
       "emergencyName": "Kontaktens namn",
       "emergencyPhone": "Kontaktens telefon",
       "notes": "Ytterligare anteckningar om patienten",
-      
+
       "incomePerDay": "Intäkter per dag",
       "agreement": "Avtalsreferens",
       "importantNote": "Viktig information som bör framhävas",
-      
+
       "caseworkerFirstName": "Förnamn",
       "caseworkerLastName": "Efternamn",
       "caseworkerMunicipality": "Kommun",
@@ -212,6 +217,33 @@
       "loadFailed": "Misslyckades med att ladda patientdata",
       "saveFailed": "Misslyckades med att spara patientdata",
       "deleteFailed": "Misslyckades med att ta bort patienten"
+    },
+    "medications": {
+      "title": "Mediciner",
+      "active": "Aktiva Mediciner",
+      "inactive": "Inaktiva Mediciner",
+      "add": "Lägg till Medicin",
+      "edit": "Redigera Medicin",
+      "name": "Medicinnamn",
+      "standardDose": "Standarddos",
+      "frequency": "Frekvens",
+      "startDate": "Startdatum",
+      "endDate": "Slutdatum",
+      "dateRange": "Datumintervall",
+      "instructions": "Instruktioner",
+      "namePlaceholder": "Ange medicinnamn",
+      "standardDosePlaceholder": "Ange standarddos",
+      "frequencyPlaceholder": "Ange frekvens",
+      "instructionsPlaceholder": "Ange speciella instruktioner eller anteckningar",
+      "noMedications": "Inga mediciner hittades",
+      "addFirst": "Lägg till din första medicin",
+      "createSuccess": "Medicin tillagd framgångsrikt",
+      "updateSuccess": "Medicin uppdaterad framgångsrikt",
+      "deleteSuccess": "Medicin borttagen framgångsrikt",
+      "createError": "Misslyckades att lägga till medicin",
+      "updateError": "Misslyckades att uppdatera medicin",
+      "deleteError": "Misslyckades att ta bort medicin",
+      "confirmDelete": "Är du säker på att du vill ta bort denna medicin?"
     }
   },
   "journals": {
@@ -223,6 +255,29 @@
     "searchPlaceholder": "Sök journalanteckningar...",
     "noResults": "Inga journalanteckningar hittades som matchar din sökning",
     "empty": "Inga journalanteckningar hittades",
+    "medicationAdministered": "Medicin Administrerad",
+    "activeMedications": "Aktiva Mediciner",
+    "actions": {
+      "addMedication": "Lägg till medicin",
+      "create": "Skapa Journalanteckning",
+      "createFirst": "Skapa din första journalanteckning",
+      "delete": "Ta bort",
+      "edit": "Redigera"
+    },
+    "entryTypes": {
+      "note": "Anteckning",
+      "medication": "Medicin",
+      "drugTest": "Drogtest",
+      "drug_test": "Drogtest",
+      "incident": "Incident",
+      "all": "Alla Typer"
+    },
+    "new": {
+      "note": "Ny Anteckning",
+      "medication": "Ny Medicinanteckning",
+      "drug_test": "Nytt Drogtest",
+      "incident": "Ny Incidentrapport"
+    },
     "categories": {
       "daily": "Daglig",
       "medical": "Medicinsk",
@@ -268,13 +323,9 @@
       "today": "Idag",
       "thisWeek": "Denna vecka",
       "thisMonth": "Denna månad",
-      "status": "Status"
-    },
-    "actions": {
-      "create": "Skapa Journalanteckning",
-      "createFirst": "Skapa din första journalanteckning",
-      "delete": "Ta bort",
-      "edit": "Redigera"
+      "thisYear": "Detta år",
+      "status": "Status",
+      "allTypes": "Alla Anteckningstyper"
     },
     "deleteDialog": {
       "title": "Ta bort journalanteckning",
@@ -293,6 +344,73 @@
       "saveFailed": "Misslyckades med att spara journaldata",
       "deleteFailed": "Misslyckades med att ta bort journalanteckningen",
       "noPatient": "Ingen patient angiven för ny journalanteckning"
+    },
+    "medication": {
+      "title": "Medicinering",
+      "medicationName": "Medicinnamn",
+      "medicationNamePlaceholder": "Ange medicinnamn",
+      "existingMedication": "Välj Befintlig Medicin",
+      "newMedication": "Ny Medicin",
+      "selectMedication": "Välj Medicin",
+      "dose": "Dos",
+      "dosePlaceholder": "Ange dos",
+      "time": "Administreringstid",
+      "notes": "Anteckningar",
+      "notesPlaceholder": "Ytterligare anteckningar om medicinering"
+    },
+    "drugTest": {
+      "title": "Drogtest",
+      "defaultTitle": "Drogtestresultat",
+      "testType": "Testtyp",
+      "testMethod": "Testmetod",
+      "testResult": "Testresultat",
+      "selectTestType": "Välj testtyp",
+      "selectTestMethod": "Välj testmetod",
+      "positiveSubstances": "Positiva Substanser",
+      "selectedSubstances": "Valda Substanser",
+      "addSubstancePlaceholder": "Skriv substansnamn och tryck Enter",
+      "pressEnterToAdd": "Tryck Enter för att lägga till",
+      "notes": "Anteckningar",
+      "notesPlaceholder": "Ytterligare anteckningar om testet",
+      "errorRequiredSubstances": "Vänligen välj minst en substans",
+      "types": {
+        "droger": "Droger",
+        "alkohol": "Alkohol",
+        "kombinerat": "Kombinerat"
+      },
+      "methods": {
+        "urin": "Urin",
+        "utandning": "Utandning",
+        "blod": "Blod",
+        "saliv": "Saliv"
+      },
+      "substances": {
+        "cannabis": "Cannabis",
+        "amfetamin": "Amfetamin",
+        "kokain": "Kokain",
+        "bensodiazepiner": "Bensodiazepiner",
+        "opiater": "Opiater",
+        "tramadol": "Tramadol",
+        "fentanyl": "Fentanyl",
+        "MDMA": "MDMA",
+        "metadon": "Metadon",
+        "buprenorfin": "Buprenorfin"
+      }
+    },
+    "incident": {
+      "title": "Incidentrapport",
+      "defaultTitle": "Incidentrapport",
+      "severity": {
+        "title": "Allvarlighetsgrad",
+        "low": "Låg",
+        "medium": "Medel",
+        "high": "Hög"
+      },
+      "details": "Incidentdetaljer",
+      "detailsPlaceholder": "Beskriv vad som hände, vem som var inblandad och omedelbara åtgärder som vidtogs",
+      "detailsHelp": "Inkludera så mycket relevant information som möjligt",
+      "followUpActions": "Uppföljningsåtgärder",
+      "followUpActionsPlaceholder": "Beskriv eventuella uppföljningsåtgärder som planeras eller har vidtagits"
     }
   },
   "users": {
@@ -424,7 +542,8 @@
     "postalCode": "Ange ett giltigt postnummer",
     "formErrors": "Åtgärda felen i formuläret för att fortsätta",
     "backendErrors": "Viss information kunde inte sparas. Kontrollera formuläret",
-    "positiveNumber": "Ange ett positivt nummer"
+    "positiveNumber": "Ange ett positivt nummer",
+    "endDateAfterStart": "Slutdatum måste vara efter startdatum"
   },
   "error": {
     "pageTitle": "Fel",
@@ -490,19 +609,19 @@
       "matchingPrediction": "Matchar prognosen"
     },
     "months": {
-    "1": "Januari",
-    "2": "Februari",
-    "3": "Mars",
-    "4": "April",
-    "5": "Maj",
-    "6": "Juni",
-    "7": "Juli",
-    "8": "Augusti",
-    "9": "September",
-    "10": "Oktober",
-    "11": "November",
-    "12": "December"
-  },
+      "1": "Januari",
+      "2": "Februari",
+      "3": "Mars",
+      "4": "April",
+      "5": "Maj",
+      "6": "Juni",
+      "7": "Juli",
+      "8": "Augusti",
+      "9": "September",
+      "10": "Oktober",
+      "11": "November",
+      "12": "December"
+    },
     "success": {
       "updated": "Ekonomidata uppdaterad"
     },

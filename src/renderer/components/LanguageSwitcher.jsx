@@ -1,7 +1,7 @@
 // src/renderer/components/LanguageSwitcher.jsx
-import React, { useState, useRef, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import { LANGUAGES, changeLanguage } from '../utils/i18n';
+import React, { useState, useRef, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import { LANGUAGES, changeLanguage } from "../utils/i18n";
 
 /**
  * Language switcher dropdown component
@@ -13,12 +13,13 @@ const LanguageSwitcher = () => {
 
   // Available languages with their display names
   const languages = [
-    { code: LANGUAGES.SV, name: 'Svenska', flag: '🇸🇪' },
-    { code: LANGUAGES.EN, name: 'English', flag: '🇬🇧' },
+    { code: LANGUAGES.SV, name: "Svenska", flag: "🇸🇪" },
+    { code: LANGUAGES.EN, name: "English", flag: "🇬🇧" },
   ];
 
   // Get current language
-  const currentLanguage = languages.find(lang => lang.code === i18n.language) || languages[0];
+  const currentLanguage =
+    languages.find((lang) => lang.code === i18n.language) || languages[0];
 
   // Handle click outside to close dropdown
   useEffect(() => {
@@ -28,9 +29,9 @@ const LanguageSwitcher = () => {
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -51,7 +52,12 @@ const LanguageSwitcher = () => {
       >
         <span className="mr-2">{currentLanguage.flag}</span>
         <span className="hidden md:inline">{currentLanguage.name}</span>
-        <svg className="ml-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+        <svg
+          className="ml-2 h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
           <path
             fillRule="evenodd"
             d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
@@ -73,7 +79,11 @@ const LanguageSwitcher = () => {
                 key={language.code}
                 className={`
                   flex items-center w-full px-4 py-2 text-sm hover:bg-base-200
-                  ${language.code === currentLanguage.code ? 'text-primary font-medium' : ''}
+                  ${
+                    language.code === currentLanguage.code
+                      ? "text-primary font-medium"
+                      : ""
+                  }
                 `}
                 role="menuitem"
                 onClick={() => handleLanguageChange(language.code)}

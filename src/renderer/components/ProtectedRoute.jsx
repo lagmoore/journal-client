@@ -1,7 +1,7 @@
 // src/renderer/components/ProtectedRoute.jsx
-import React, { useEffect } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useEffect } from "react";
+import { Navigate, useLocation } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
 
 /**
  * Protected route component that redirects to login if user is not authenticated

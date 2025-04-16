@@ -1,125 +1,135 @@
 // src/renderer/components/journals/JournalForm.jsx
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from 'react-i18next';
-import FormInput from '../FormInput';
+import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
+import FormInput from "../FormInput";
 
 // Import specialized form components for each entry type
-import MedicationEntryForm from './MedicationEntryForm';
-import DrugTestEntryForm from './DrugTestEntryForm';
-import IncidentEntryForm from './IncidentEntryForm';
+import MedicationEntryForm from "./MedicationEntryForm";
+import DrugTestEntryForm from "./DrugTestEntryForm";
+import IncidentEntryForm from "./IncidentEntryForm";
 
 const JournalForm = ({ journal, medications, onSave, isNew }) => {
   const { t } = useTranslation();
-  
+
   // Form state
   const [formData, setFormData] = useState(journal);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [isDirty, setIsDirty] = useState(false);
-  
+
   // Determine the entry type - default to 'note' if not specified
-  const entryType = formData.entryType || 'note';
-  
+  const entryType = formData.entryType || "note";
+
   // Available categories
   const categories = [
-    'daily', 'medical', 'behavioral', 'educational', 'social', 'other'
+    "daily",
+    "medical",
+    "behavioral",
+    "educational",
+    "social",
+    "other",
   ];
-  
+
   // Update form data when journal changes
   useEffect(() => {
     setFormData(journal);
     setIsDirty(false);
   }, [journal]);
-  
+
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     setIsDirty(true);
   };
-  
+
   // Handle specialized form change
   const handleSpecializedFormChange = (data) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      ...data
+      ...data,
     }));
     setIsDirty(true);
   };
-  
+
   // Validate form
   const validateForm = () => {
     const errors = {};
-    
+
     if (!formData.title?.trim()) {
-      errors.title = t('validation.required');
+      errors.title = t("validation.required");
     }
-    
+
     // Validate based on entry type
     switch (entryType) {
-      case 'note':
+      case "note":
         if (!formData.content?.trim()) {
-          errors.content = t('validation.required');
+          errors.content = t("validation.required");
         }
         break;
-        
-      case 'medication':
+
+      case "medication":
         if (!formData.medicationName) {
-          errors.medicationName = t('validation.required');
+          errors.medicationName = t("validation.required");
         }
         if (!formData.medicationDose) {
-          errors.medicationDose = t('validation.required');
+          errors.medicationDose = t("validation.required");
         }
         break;
-        
-      case 'drug_test':
+
+      case "drug_test":
         if (!formData.testType) {
-          errors.testType = t('validation.required');
+          errors.testType = t("validation.required");
         }
         if (!formData.testMethod) {
-          errors.testMethod = t('validation.required');
+          errors.testMethod = t("validation.required");
         }
         if (!formData.testResult) {
-          errors.testResult = t('validation.required');
+          errors.testResult = t("validation.required");
         }
         // Require positive substances for positive non-breath test
-        if (formData.testResult === 'positive' && 
-            formData.testMethod !== 'utandning' && 
-            (!formData.positiveSubstances || formData.positiveSubstances.length === 0)) {
-          errors.positiveSubstances = t('journals.drugTest.errorRequiredSubstances');
+        if (
+          formData.testResult === "positive" &&
+          formData.testMethod !== "utandning" &&
+          (!formData.positiveSubstances ||
+            formData.positiveSubstances.length === 0)
+        ) {
+          errors.positiveSubstances = t(
+            "journals.drugTest.errorRequiredSubstances"
+          );
         }
         break;
-        
-      case 'incident':
+
+      case "incident":
         if (!formData.incidentSeverity) {
-          errors.incidentSeverity = t('validation.required');
+          errors.incidentSeverity = t("validation.required");
         }
         if (!formData.incidentDetails?.trim()) {
-          errors.incidentDetails = t('validation.required');
+          errors.incidentDetails = t("validation.required");
         }
         break;
     }
-    
+
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
-  
+
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     try {
       const result = await onSave(formData);
-      
+
       if (result === true) {
         // Success
         setIsDirty(false);
@@ -131,20 +141,20 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
       setIsSubmitting(false);
     }
   };
-  
+
   // Handle status change
   const handleStatusChange = (status) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      status
+      status,
     }));
     setIsDirty(true);
   };
-  
+
   // Render appropriate form based on entry type
   const renderEntryTypeForm = () => {
     switch (entryType) {
-      case 'medication':
+      case "medication":
         return (
           <MedicationEntryForm
             formData={formData}
@@ -153,8 +163,8 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
             errors={formErrors}
           />
         );
-        
-      case 'drug_test':
+
+      case "drug_test":
         return (
           <DrugTestEntryForm
             formData={formData}
@@ -162,8 +172,8 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
             errors={formErrors}
           />
         );
-        
-      case 'incident':
+
+      case "incident":
         return (
           <IncidentEntryForm
             formData={formData}
@@ -171,23 +181,23 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
             errors={formErrors}
           />
         );
-        
-      case 'note':
+
+      case "note":
       default:
         return (
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">
-              {t('journals.fields.content')}
+              {t("journals.fields.content")}
               <span className="text-error ml-1">*</span>
             </label>
             <textarea
               name="content"
               rows="12"
-              value={formData.content || ''}
+              value={formData.content || ""}
               onChange={handleChange}
-              placeholder={t('journals.placeholders.content')}
+              placeholder={t("journals.placeholders.content")}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                formErrors.content ? 'border-error' : 'border-base-300'
+                formErrors.content ? "border-error" : "border-base-300"
               }`}
             ></textarea>
             {formErrors.content && (
@@ -197,7 +207,7 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
         );
     }
   };
-  
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {/* Entry type indicator (for existing journals) */}
@@ -206,32 +216,32 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
           {t(`journals.entryTypes.${entryType}`)}
         </div>
       )}
-      
+
       {/* Journal details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormInput
           type="text"
           name="title"
-          value={formData.title || ''}
+          value={formData.title || ""}
           onChange={handleChange}
-          label={t('journals.fields.title')}
-          placeholder={t('journals.placeholders.title')}
+          label={t("journals.fields.title")}
+          placeholder={t("journals.placeholders.title")}
           required
           errorMessage={formErrors.title}
         />
-        
+
         <div className="mb-4">
           <label className="block text-sm font-medium mb-1">
-            {t('journals.fields.category')}
+            {t("journals.fields.category")}
           </label>
           <select
             name="category"
-            value={formData.category || ''}
+            value={formData.category || ""}
             onChange={handleChange}
             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary border-base-300"
           >
-            <option value="">{t('journals.placeholders.category')}</option>
-            {categories.map(category => (
+            <option value="">{t("journals.placeholders.category")}</option>
+            {categories.map((category) => (
               <option key={category} value={category}>
                 {t(`journals.categories.${category}`)}
               </option>
@@ -239,54 +249,54 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
           </select>
         </div>
       </div>
-      
+
       {/* Type-specific form */}
       {renderEntryTypeForm()}
-      
+
       {/* Status buttons - only show for existing journals */}
       {!isNew && (
         <div className="p-4 bg-base-200 rounded-lg border border-base-300">
           <label className="block text-sm font-medium mb-2">
-            {t('journals.fields.status')}
+            {t("journals.fields.status")}
           </label>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               className={`px-4 py-2 rounded-md border ${
-                formData.status === 'draft'
-                  ? 'bg-info bg-opacity-10 border-info text-info'
-                  : 'bg-base-100 border-base-300 text-neutral'
+                formData.status === "draft"
+                  ? "bg-info bg-opacity-10 border-info text-info"
+                  : "bg-base-100 border-base-300 text-neutral"
               }`}
-              onClick={() => handleStatusChange('draft')}
+              onClick={() => handleStatusChange("draft")}
             >
-              {t('journals.status.draft')}
+              {t("journals.status.draft")}
             </button>
             <button
               type="button"
               className={`px-4 py-2 rounded-md border ${
-                formData.status === 'completed'
-                  ? 'bg-success bg-opacity-10 border-success text-success'
-                  : 'bg-base-100 border-base-300 text-neutral'
+                formData.status === "completed"
+                  ? "bg-success bg-opacity-10 border-success text-success"
+                  : "bg-base-100 border-base-300 text-neutral"
               }`}
-              onClick={() => handleStatusChange('completed')}
+              onClick={() => handleStatusChange("completed")}
             >
-              {t('journals.status.completed')}
+              {t("journals.status.completed")}
             </button>
             <button
               type="button"
               className={`px-4 py-2 rounded-md border ${
-                formData.status === 'archived'
-                  ? 'bg-neutral bg-opacity-10 border-neutral text-neutral'
-                  : 'bg-base-100 border-base-300 text-neutral'
+                formData.status === "archived"
+                  ? "bg-neutral bg-opacity-10 border-neutral text-neutral"
+                  : "bg-base-100 border-base-300 text-neutral"
               }`}
-              onClick={() => handleStatusChange('archived')}
+              onClick={() => handleStatusChange("archived")}
             >
-              {t('journals.status.archived')}
+              {t("journals.status.archived")}
             </button>
           </div>
         </div>
       )}
-      
+
       {/* Form actions */}
       <div className="flex justify-end gap-4">
         <button
@@ -296,14 +306,32 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
         >
           {isSubmitting ? (
             <span className="flex items-center">
-              <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              <svg
+                className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
               </svg>
-              {t('common.saving')}
+              {t("common.saving")}
             </span>
+          ) : isNew ? (
+            t("common.create")
           ) : (
-            isNew ? t('common.create') : t('common.save')
+            t("common.save")
           )}
         </button>
       </div>

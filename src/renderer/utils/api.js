@@ -1,18 +1,19 @@
 // src/renderer/utils/api.js
-import axios from 'axios';
-import toast from 'react-hot-toast';
-import { isTokenExpired } from './tokenUtils';
-import i18next from 'i18next';
+import axios from "axios";
+import toast from "react-hot-toast";
+import { isTokenExpired } from "./tokenUtils";
+import i18next from "i18next";
 
 // API base URL from environment or default
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+const API_BASE_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8000/api";
 
 // Create axios instance
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    "Content-Type": "application/json",
+    Accept: "application/json",
   },
 });
 
@@ -21,12 +22,12 @@ api.interceptors.request.use(
   async (config) => {
     // Get stored access token from sessionStorage (only for current session)
     // This is temporary storage; the actual token will be retrieved from keytar when needed
-    const accessToken = sessionStorage.getItem('accessToken');
-    
+    const accessToken = sessionStorage.getItem("accessToken");
+
     if (accessToken && !isTokenExpired(accessToken)) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
-    
+
     return config;
   },
   (error) => {
@@ -43,54 +44,54 @@ api.interceptors.response.use(
     // Check for specific error responses
     if (error.response) {
       const { status, data } = error.response;
-      
+
       // Handle different status codes
       switch (status) {
         case 401: // Unauthorized
           // This will be handled by the AuthContext
           break;
-          
+
         case 403: // Forbidden
-          toast.error(i18next.t('api.errors.forbidden'));
+          toast.error(i18next.t("api.errors.forbidden"));
           break;
-          
+
         case 404: // Not Found
-          toast.error(i18next.t('api.errors.notFound'));
+          toast.error(i18next.t("api.errors.notFound"));
           break;
-          
+
         case 422: // Validation Error
           if (data.errors) {
             // Format validation errors
             const errorMessages = Object.values(data.errors).flat();
-            errorMessages.forEach(message => toast.error(message));
+            errorMessages.forEach((message) => toast.error(message));
           } else {
-            toast.error(data.message || i18next.t('api.errors.validation'));
+            toast.error(data.message || i18next.t("api.errors.validation"));
           }
           break;
-          
+
         case 429: // Too Many Requests
-          toast.error(i18next.t('api.errors.tooManyRequests'));
+          toast.error(i18next.t("api.errors.tooManyRequests"));
           break;
-          
+
         case 500: // Server Error
         case 502: // Bad Gateway
         case 503: // Service Unavailable
         case 504: // Gateway Timeout
-          toast.error(i18next.t('api.errors.serverError'));
+          toast.error(i18next.t("api.errors.serverError"));
           break;
-          
+
         default:
-          toast.error(data.message || i18next.t('api.errors.unknown'));
+          toast.error(data.message || i18next.t("api.errors.unknown"));
           break;
       }
     } else if (error.request) {
       // Network error
-      toast.error(i18next.t('api.errors.network'));
+      toast.error(i18next.t("api.errors.network"));
     } else {
       // Other errors
-      toast.error(i18next.t('api.errors.unknown'));
+      toast.error(i18next.t("api.errors.unknown"));
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -107,7 +108,7 @@ export const apiRequest = {
       throw error;
     }
   },
-  
+
   post: async (url, data = {}, config = {}) => {
     try {
       return await api.post(url, data, config);
@@ -116,7 +117,7 @@ export const apiRequest = {
       throw error;
     }
   },
-  
+
   put: async (url, data = {}, config = {}) => {
     try {
       return await api.put(url, data, config);
@@ -125,7 +126,7 @@ export const apiRequest = {
       throw error;
     }
   },
-  
+
   patch: async (url, data = {}, config = {}) => {
     try {
       return await api.patch(url, data, config);
@@ -134,7 +135,7 @@ export const apiRequest = {
       throw error;
     }
   },
-  
+
   delete: async (url, config = {}) => {
     try {
       return await api.delete(url, config);

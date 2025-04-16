@@ -1,97 +1,108 @@
 // src/renderer/components/journals/DrugTestEntryForm.jsx
-import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import FormInput from '../FormInput';
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
+import FormInput from "../FormInput";
 
 const DrugTestEntryForm = ({ formData, onChange, errors }) => {
   const { t } = useTranslation();
-  
+
   // Common substances for positive drug tests
   const commonSubstances = [
-    'cannabis', 'amfetamin', 'kokain', 'bensodiazepiner', 'opiater', 
-    'tramadol', 'fentanyl', 'MDMA', 'metadon', 'buprenorfin'
+    "cannabis",
+    "amfetamin",
+    "kokain",
+    "bensodiazepiner",
+    "opiater",
+    "tramadol",
+    "fentanyl",
+    "MDMA",
+    "metadon",
+    "buprenorfin",
   ];
-  
+
   // Available test types
-  const testTypes = ['droger', 'alkohol', 'kombinerat'];
-  
+  const testTypes = ["droger", "alkohol", "kombinerat"];
+
   // Available test methods
-  const testMethods = ['urin', 'utandning', 'blod', 'saliv'];
-  
+  const testMethods = ["urin", "utandning", "blod", "saliv"];
+
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     onChange({ [name]: value });
   };
-  
+
   // Handle test result change
   const handleResultChange = (result) => {
     onChange({ testResult: result });
-    
+
     // If switching to negative, clear positive substances
-    if (result === 'negative') {
+    if (result === "negative") {
       onChange({ positiveSubstances: [] });
     }
   };
-  
+
   // Handle substance selection
   const handleSubstanceToggle = (substance) => {
     const currentSubstances = formData.positiveSubstances || [];
     let newSubstances;
-    
+
     if (currentSubstances.includes(substance)) {
       // Remove substance if already selected
-      newSubstances = currentSubstances.filter(s => s !== substance);
+      newSubstances = currentSubstances.filter((s) => s !== substance);
     } else {
       // Add substance if not selected
       newSubstances = [...currentSubstances, substance];
     }
-    
+
     onChange({ positiveSubstances: newSubstances });
   };
-  
+
   // Handle custom substance addition
   const handleAddCustomSubstance = (e) => {
-    if (e.key === 'Enter' && e.target.value.trim()) {
+    if (e.key === "Enter" && e.target.value.trim()) {
       e.preventDefault();
       const substance = e.target.value.trim();
       const currentSubstances = formData.positiveSubstances || [];
-      
+
       if (!currentSubstances.includes(substance)) {
         onChange({ positiveSubstances: [...currentSubstances, substance] });
-        e.target.value = '';
+        e.target.value = "";
       }
     }
   };
-  
+
   // Check if breath test is selected (for alcohol)
-  const isBreathTest = formData.testMethod === 'utandning';
-  
+  const isBreathTest = formData.testMethod === "utandning";
+
   // Should show positive substances section?
-  const showPositiveSubstances = formData.testResult === 'positive' && !isBreathTest;
-  
+  const showPositiveSubstances =
+    formData.testResult === "positive" && !isBreathTest;
+
   return (
     <div className="space-y-6">
       <div className="p-4 bg-primary bg-opacity-5 rounded-lg border border-primary border-opacity-20">
-        <h3 className="font-medium text-primary mb-4">{t('journals.drugTest.title')}</h3>
-        
+        <h3 className="font-medium text-primary mb-4">
+          {t("journals.drugTest.title")}
+        </h3>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Test type selection */}
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">
-              {t('journals.drugTest.testType')}
+              {t("journals.drugTest.testType")}
               <span className="text-error ml-1">*</span>
             </label>
             <select
               name="testType"
-              value={formData.testType || ''}
+              value={formData.testType || ""}
               onChange={handleChange}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                errors.testType ? 'border-error' : 'border-base-300'
+                errors.testType ? "border-error" : "border-base-300"
               }`}
             >
-              <option value="">{t('journals.drugTest.selectTestType')}</option>
-              {testTypes.map(type => (
+              <option value="">{t("journals.drugTest.selectTestType")}</option>
+              {testTypes.map((type) => (
                 <option key={type} value={type}>
                   {t(`journals.drugTest.types.${type}`)}
                 </option>
@@ -101,23 +112,25 @@ const DrugTestEntryForm = ({ formData, onChange, errors }) => {
               <p className="text-error text-sm mt-1">{errors.testType}</p>
             )}
           </div>
-          
+
           {/* Test method selection */}
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">
-              {t('journals.drugTest.testMethod')}
+              {t("journals.drugTest.testMethod")}
               <span className="text-error ml-1">*</span>
             </label>
             <select
               name="testMethod"
-              value={formData.testMethod || ''}
+              value={formData.testMethod || ""}
               onChange={handleChange}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                errors.testMethod ? 'border-error' : 'border-base-300'
+                errors.testMethod ? "border-error" : "border-base-300"
               }`}
             >
-              <option value="">{t('journals.drugTest.selectTestMethod')}</option>
-              {testMethods.map(method => (
+              <option value="">
+                {t("journals.drugTest.selectTestMethod")}
+              </option>
+              {testMethods.map((method) => (
                 <option key={method} value={method}>
                   {t(`journals.drugTest.methods.${method}`)}
                 </option>
@@ -128,59 +141,59 @@ const DrugTestEntryForm = ({ formData, onChange, errors }) => {
             )}
           </div>
         </div>
-        
+
         {/* Test result selection */}
         <div className="mb-4">
           <label className="block text-sm font-medium mb-2">
-            {t('journals.drugTest.testResult')}
+            {t("journals.drugTest.testResult")}
             <span className="text-error ml-1">*</span>
           </label>
           <div className="flex gap-4">
             <button
               type="button"
               className={`flex-1 px-3 py-2 rounded-lg border ${
-                formData.testResult === 'negative'
-                  ? 'bg-success bg-opacity-10 border-success text-success'
-                  : 'bg-base-100 border-base-300'
+                formData.testResult === "negative"
+                  ? "bg-success bg-opacity-10 border-success text-success"
+                  : "bg-base-100 border-base-300"
               }`}
-              onClick={() => handleResultChange('negative')}
+              onClick={() => handleResultChange("negative")}
             >
-              {t('common.negative')}
+              {t("common.negative")}
             </button>
             <button
               type="button"
               className={`flex-1 px-3 py-2 rounded-lg border ${
-                formData.testResult === 'positive'
-                  ? 'bg-error bg-opacity-10 border-error text-error'
-                  : 'bg-base-100 border-base-300'
+                formData.testResult === "positive"
+                  ? "bg-error bg-opacity-10 border-error text-error"
+                  : "bg-base-100 border-base-300"
               }`}
-              onClick={() => handleResultChange('positive')}
+              onClick={() => handleResultChange("positive")}
             >
-              {t('common.positive')}
+              {t("common.positive")}
             </button>
           </div>
           {errors.testResult && (
             <p className="text-error text-sm mt-1">{errors.testResult}</p>
           )}
         </div>
-        
+
         {/* Positive substances section */}
         {showPositiveSubstances && (
           <div className="mt-4">
             <label className="block text-sm font-medium mb-2">
-              {t('journals.drugTest.positiveSubstances')}
+              {t("journals.drugTest.positiveSubstances")}
               <span className="text-error ml-1">*</span>
             </label>
-            
+
             <div className="flex flex-wrap gap-2 mb-3">
-              {commonSubstances.map(substance => (
+              {commonSubstances.map((substance) => (
                 <button
                   key={substance}
                   type="button"
                   className={`px-3 py-1 rounded-lg text-sm border ${
                     formData.positiveSubstances?.includes(substance)
-                      ? 'bg-error bg-opacity-10 border-error text-error'
-                      : 'bg-base-100 border-base-300'
+                      ? "bg-error bg-opacity-10 border-error text-error"
+                      : "bg-base-100 border-base-300"
                   }`}
                   onClick={() => handleSubstanceToggle(substance)}
                 >
@@ -188,36 +201,48 @@ const DrugTestEntryForm = ({ formData, onChange, errors }) => {
                 </button>
               ))}
             </div>
-            
+
             <div className="mt-2">
               <input
                 type="text"
-                placeholder={t('journals.drugTest.addSubstancePlaceholder')}
+                placeholder={t("journals.drugTest.addSubstancePlaceholder")}
                 className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary border-base-300"
                 onKeyDown={handleAddCustomSubstance}
               />
               <p className="text-xs text-neutral mt-1">
-                {t('journals.drugTest.pressEnterToAdd')}
+                {t("journals.drugTest.pressEnterToAdd")}
               </p>
             </div>
-            
+
             {/* Show selected substances */}
             {formData.positiveSubstances?.length > 0 && (
               <div className="mt-3">
                 <div className="text-sm font-medium mb-1">
-                  {t('journals.drugTest.selectedSubstances')}:
+                  {t("journals.drugTest.selectedSubstances")}:
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {formData.positiveSubstances.map((substance, index) => (
-                    <div key={index} className="px-2 py-1 bg-error bg-opacity-10 text-error text-sm rounded-lg flex items-center">
+                    <div
+                      key={index}
+                      className="px-2 py-1 bg-error bg-opacity-10 text-error text-sm rounded-lg flex items-center"
+                    >
                       {substance}
                       <button
                         type="button"
                         className="ml-1 text-error hover:text-error-focus"
                         onClick={() => handleSubstanceToggle(substance)}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          viewBox="0 0 20 20"
+                          fill="currentColor"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                            clipRule="evenodd"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -225,25 +250,27 @@ const DrugTestEntryForm = ({ formData, onChange, errors }) => {
                 </div>
               </div>
             )}
-            
+
             {errors.positiveSubstances && (
-              <p className="text-error text-sm mt-2">{errors.positiveSubstances}</p>
+              <p className="text-error text-sm mt-2">
+                {errors.positiveSubstances}
+              </p>
             )}
           </div>
         )}
       </div>
-      
+
       {/* Optional notes */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">
-          {t('journals.drugTest.notes')}
+          {t("journals.drugTest.notes")}
         </label>
         <textarea
           name="content"
           rows="4"
-          value={formData.content || ''}
+          value={formData.content || ""}
           onChange={handleChange}
-          placeholder={t('journals.drugTest.notesPlaceholder')}
+          placeholder={t("journals.drugTest.notesPlaceholder")}
           className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary border-base-300"
         ></textarea>
       </div>
