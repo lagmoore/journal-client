@@ -454,5 +454,47 @@
     "users": "Användare",
     "noResults": "Inga resultat hittades",
     "searchForSomething": "Sök efter patienter, journaler eller användare"
+  },
+  "economy": {
+    "title": "Ekonomi",
+    "selectYear": "Välj År",
+    "monthlyData": "Månadsdata",
+    "totals": "Summa",
+    "editData": "Redigera data för {month} {year}",
+    "predictedIncomeNote": "Förväntade intäkter beräknas automatiskt baserat på patientdata",
+    "chart": {
+      "title": "Intäktsöversikt"
+    },
+    "fields": {
+      "month": "Månad",
+      "actualIncome": "Faktiska Intäkter",
+      "budget": "Budget",
+      "predictedIncome": "Förväntade Intäkter",
+      "actions": "Åtgärder"
+    },
+    "placeholders": {
+      "actualIncome": "Ange faktiska intäkter",
+      "budget": "Ange budget"
+    },
+    "stats": {
+      "actualIncome": "Faktiska Intäkter",
+      "yearlyBudget": "Årsbudget",
+      "predictedIncome": "Förväntade Intäkter",
+      "forYear": "För {year}",
+      "budgetMet": "Budgetmål uppnått",
+      "budgetNotMet": "Budgetmål ej uppnått",
+      "ofBudget": "av budgetmål",
+      "noBudget": "Ingen budget satt",
+      "abovePrediction": "över prognos",
+      "belowPrediction": "under prognos",
+      "matchingPrediction": "Matchar prognosen"
+    },
+    "success": {
+      "updated": "Ekonomidata uppdaterad"
+    },
+    "errors": {
+      "loadFailed": "Kunde inte ladda ekonomidata",
+      "updateFailed": "Kunde inte uppdatera ekonomidata"
+    }
   }
 }

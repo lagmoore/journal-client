@@ -454,5 +454,47 @@
     "users": "Users",
     "noResults": "No results found",
     "searchForSomething": "Search for patients, journals or users"
+  },
+  "economy": {
+    "title": "Economy",
+    "selectYear": "Select Year",
+    "monthlyData": "Monthly Data",
+    "totals": "Totals",
+    "editData": "Edit Data for {month} {year}",
+    "predictedIncomeNote": "Predicted income is calculated automatically based on patient data",
+    "chart": {
+      "title": "Income Overview"
+    },
+    "fields": {
+      "month": "Month",
+      "actualIncome": "Actual Income",
+      "budget": "Budget",
+      "predictedIncome": "Predicted Income",
+      "actions": "Actions"
+    },
+    "placeholders": {
+      "actualIncome": "Enter actual income",
+      "budget": "Enter budget"
+    },
+    "stats": {
+      "actualIncome": "Actual Income",
+      "yearlyBudget": "Yearly Budget",
+      "predictedIncome": "Predicted Income",
+      "forYear": "For {year}",
+      "budgetMet": "Budget target met",
+      "budgetNotMet": "Budget target not met",
+      "ofBudget": "of budget goal",
+      "noBudget": "No budget set",
+      "abovePrediction": "above prediction",
+      "belowPrediction": "below prediction",
+      "matchingPrediction": "Matching prediction"
+    },
+    "success": {
+      "updated": "Economy data updated successfully"
+    },
+    "errors": {
+      "loadFailed": "Failed to load economy data",
+      "updateFailed": "Failed to update economy data"
+    }
   }
 }
