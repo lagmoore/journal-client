@@ -1,18 +1,17 @@
 // src/renderer/components/journals/JournalForm.jsx
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import FormInput from "../FormInput";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../utils/api";
 import toast from "react-hot-toast";
+import FormInput from "../FormInput";
 
 // Import specialized form components for each entry type
 import MedicationEntryForm from "./MedicationEntryForm";
 import DrugTestEntryForm from "./DrugTestEntryForm";
 import IncidentEntryForm from "./IncidentEntryForm";
 
-
-const JournalForm = ({ journal, medications, onSave, isNew }) => {
+const JournalForm = ({ journal, journalId, medications, onSave, isNew }) => {
   const { t } = useTranslation();
   const { accessToken } = useAuth();
 
@@ -72,24 +71,57 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
     setIsDirty(false);
   }, [journal]);
 
+  // Parse versioned content
+  const parseVersionedContent = (content) => {
+    if (!content) return { current: "", previous: [] };
+
+    // Split by version marker (timestamp)
+    const parts = content.split(
+      /\n\n--- \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} ---\n\n/
+    );
+
+    if (parts.length <= 1) {
+      // No versions found, just return the content
+      return { current: content, previous: [] };
+    }
+
+    // First part is the newest content
+    const current = parts[0];
+
+    // Get timestamps for labeling previous versions
+    const timestamps =
+      content.match(/\n\n--- (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ---\n\n/g) ||
+      [];
+    const formattedTimestamps = timestamps
+      .map((ts) => ts.match(/(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/))
+      .filter(Boolean)
+      .map((match) => match[1]);
+
+    // Create previous versions with their timestamps
+    const previous = [];
+    for (let i = 1; i < parts.length; i++) {
+      previous.push({
+        content: parts[i],
+        timestamp: formattedTimestamps[i - 1] || "Unknown date",
+      });
+    }
+
+    return { current, previous };
+  };
+
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // For content, if this is an existing journal and not in draft status,
-    // we need to append instead of replacing
-    if (name === "content" && !isNew && formData.status !== "draft") {
-      const newContent =
-        originalContent +
-        "\n\n--- " +
-        new Date().toLocaleString() +
-        " ---\n" +
-        value;
+    if (name === "content") {
+      // For content, we only update the current version's text
+      // The backend will handle versioning when saved
       setFormData((prev) => ({
         ...prev,
-        content: newContent,
+        [name]: value,
       }));
     } else {
+      // For other fields, update normally
       setFormData((prev) => ({
         ...prev,
         [name]: value,
@@ -97,6 +129,14 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
     }
 
     setIsDirty(true);
+
+    // Clear specific error when field is updated
+    if (formErrors[name]) {
+      setFormErrors((prev) => ({
+        ...prev,
+        [name]: "",
+      }));
+    }
   };
 
   // Handle specialized form change
@@ -219,7 +259,7 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
     try {
       // Call the sign endpoint
       const response = await api.post(
-        `/journals/${journal.id}/sign`,
+        `/journals/${journalId}/sign`,
         {},
         {
           headers: { Authorization: `Bearer ${accessToken}` },
@@ -244,6 +284,306 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
 
   // Render appropriate form based on entry type
   const renderEntryTypeForm = () => {
+    // First check if entry is completed or archived - only show readonly view for these
+    if (formData.status === "completed" || formData.status === "archived") {
+      // Return readonly view based on entry type
+      switch (entryType) {
+        case "medication":
+          const { current: medCurrent, previous: medPrevious } =
+            parseVersionedContent(formData.content);
+
+          return (
+            <div className="space-y-6">
+              <div className="p-4 bg-success bg-opacity-5 rounded-lg border border-success border-opacity-20">
+                <h3 className="font-medium text-success mb-4">
+                  {t("journals.medication.title")}
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <div className="text-sm font-medium mb-1">
+                      {t("journals.medication.medicationName")}
+                    </div>
+                    <div className="p-3 border rounded-md bg-base-200">
+                      {formData.medicationName || "-"}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-sm font-medium mb-1">
+                      {t("journals.medication.dose")}
+                    </div>
+                    <div className="p-3 border rounded-md bg-base-200">
+                      {formData.medicationDose || "-"}
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <div className="text-sm font-medium mb-1">
+                    {t("journals.medication.time")}
+                  </div>
+                  <div className="p-3 border rounded-md bg-base-200">
+                    {formData.medicationTime
+                      ? new Date(formData.medicationTime).toLocaleString()
+                      : "-"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Current notes */}
+              {medCurrent && (
+                <div>
+                  <div className="text-sm font-medium mb-1">
+                    {t("journals.medication.notes")}
+                  </div>
+                  <div className="p-3 border rounded-md bg-base-100 whitespace-pre-wrap">
+                    {medCurrent}
+                  </div>
+                </div>
+              )}
+
+              {/* Previous versions */}
+              {medPrevious.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-sm font-medium text-neutral mb-2">
+                    {t("journals.previousVersions")}
+                  </div>
+
+                  {medPrevious.map((version, index) => (
+                    <div
+                      key={index}
+                      className="p-3 border rounded-md bg-base-200 mb-2"
+                    >
+                      <div className="text-xs text-neutral mb-1">
+                        {t("journals.versionFrom", { date: version.timestamp })}
+                      </div>
+                      <div className="whitespace-pre-wrap text-neutral line-through">
+                        {version.content}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+
+        case "drug_test":
+          const { current: testCurrent, previous: testPrevious } =
+            parseVersionedContent(formData.content);
+
+          return (
+            <div className="space-y-6">
+              <div className="p-4 bg-primary bg-opacity-5 rounded-lg border border-primary border-opacity-20">
+                <h3 className="font-medium text-primary mb-4">
+                  {t("journals.drugTest.title")}
+                </h3>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <div className="text-sm font-medium mb-1">
+                      {t("journals.drugTest.testType")}
+                    </div>
+                    <div className="p-3 border rounded-md bg-base-200">
+                      {formData.testType || "-"}
+                    </div>
+                  </div>
+
+                  <div>
+                    <div className="text-sm font-medium mb-1">
+                      {t("journals.drugTest.testMethod")}
+                    </div>
+                    <div className="p-3 border rounded-md bg-base-200">
+                      {formData.testMethod || "-"}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <div className="text-sm font-medium mb-1">
+                    {t("journals.drugTest.testResult")}
+                  </div>
+                  <div className="p-3 border rounded-md bg-base-200">
+                    {formData.testResult === "positive"
+                      ? t("common.positive")
+                      : t("common.negative")}
+                  </div>
+                </div>
+
+                {formData.testResult === "positive" &&
+                  formData.positiveSubstances?.length > 0 && (
+                    <div className="mb-4">
+                      <div className="text-sm font-medium mb-1">
+                        {t("journals.drugTest.positiveSubstances")}
+                      </div>
+                      <div className="p-3 border rounded-md bg-base-200">
+                        <div className="flex flex-wrap gap-1">
+                          {formData.positiveSubstances.map(
+                            (substance, index) => (
+                              <span
+                                key={index}
+                                className="px-2 py-0.5 bg-base-300 rounded-full text-xs"
+                              >
+                                {substance}
+                              </span>
+                            )
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+              </div>
+
+              {/* Current notes */}
+              {testCurrent && (
+                <div>
+                  <div className="text-sm font-medium mb-1">
+                    {t("journals.drugTest.notes")}
+                  </div>
+                  <div className="p-3 border rounded-md bg-base-100 whitespace-pre-wrap">
+                    {testCurrent}
+                  </div>
+                </div>
+              )}
+
+              {/* Previous versions */}
+              {testPrevious.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-sm font-medium text-neutral mb-2">
+                    {t("journals.previousVersions")}
+                  </div>
+
+                  {testPrevious.map((version, index) => (
+                    <div
+                      key={index}
+                      className="p-3 border rounded-md bg-base-200 mb-2"
+                    >
+                      <div className="text-xs text-neutral mb-1">
+                        {t("journals.versionFrom", { date: version.timestamp })}
+                      </div>
+                      <div className="whitespace-pre-wrap text-neutral line-through">
+                        {version.content}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+
+        case "incident":
+          const { current: incidentCurrent, previous: incidentPrevious } =
+            parseVersionedContent(formData.content);
+
+          return (
+            <div className="space-y-6">
+              <div className="p-4 bg-error bg-opacity-5 rounded-lg border border-error border-opacity-20">
+                <h3 className="font-medium text-error mb-4">
+                  {t("journals.incident.title")}
+                </h3>
+
+                <div className="mb-4">
+                  <div className="text-sm font-medium mb-1">
+                    {t("journals.incident.severity.title")}
+                  </div>
+                  <div className="p-3 border rounded-md bg-base-200">
+                    {t(
+                      `journals.incident.severity.${
+                        formData.incidentSeverity || "low"
+                      }`
+                    )}
+                  </div>
+                </div>
+
+                <div className="mb-4">
+                  <div className="text-sm font-medium mb-1">
+                    {t("journals.incident.details")}
+                  </div>
+                  <div className="p-3 border rounded-md bg-base-200 whitespace-pre-wrap">
+                    {formData.incidentDetails || "-"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Current notes */}
+              {incidentCurrent && (
+                <div>
+                  <div className="text-sm font-medium mb-1">
+                    {t("journals.incident.followUpActions")}
+                  </div>
+                  <div className="p-3 border rounded-md bg-base-100 whitespace-pre-wrap">
+                    {incidentCurrent}
+                  </div>
+                </div>
+              )}
+
+              {/* Previous versions */}
+              {incidentPrevious.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-sm font-medium text-neutral mb-2">
+                    {t("journals.previousVersions")}
+                  </div>
+
+                  {incidentPrevious.map((version, index) => (
+                    <div
+                      key={index}
+                      className="p-3 border rounded-md bg-base-200 mb-2"
+                    >
+                      <div className="text-xs text-neutral mb-1">
+                        {t("journals.versionFrom", { date: version.timestamp })}
+                      </div>
+                      <div className="whitespace-pre-wrap text-neutral line-through">
+                        {version.content}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+
+        case "note":
+          const { current, previous } = parseVersionedContent(formData.content);
+
+          return (
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">
+                {t("journals.fields.content")}
+              </label>
+
+              {/* Current content */}
+              <div className="p-3 border rounded-md bg-base-100 mb-4">
+                <div className="whitespace-pre-wrap">{current}</div>
+              </div>
+
+              {/* Previous versions */}
+              {previous.length > 0 && (
+                <div className="mt-4">
+                  <div className="text-sm font-medium text-neutral mb-2">
+                    {t("journals.previousVersions")}
+                  </div>
+
+                  {previous.map((version, index) => (
+                    <div
+                      key={index}
+                      className="p-3 border rounded-md bg-base-200 mb-2"
+                    >
+                      <div className="text-xs text-neutral mb-1">
+                        {t("journals.versionFrom", { date: version.timestamp })}
+                      </div>
+                      <div className="whitespace-pre-wrap text-neutral line-through">
+                        {version.content}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+      }
+    }
+
+    // If journal is in draft state, render the normal edit forms
     switch (entryType) {
       case "medication":
         return (
@@ -281,46 +621,103 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
               {t("journals.fields.content")}
               <span className="text-error ml-1">*</span>
             </label>
-            {!isNew && formData.status !== "draft" ? (
-              <div>
-                <div className="w-full px-3 py-2 border rounded-md bg-base-200 mb-4">
-                  <div
-                    style={{ textDecoration: "line-through" }}
-                    className="whitespace-pre-wrap"
-                  >
-                    {originalContent}
-                  </div>
-                </div>
-                <textarea
-                  name="content"
-                  rows="6"
-                  value={
+
+            {formData.status === "draft" ? (
+              // For draft status, show editor
+              <>
+                {/* Parse the versioned content */}
+                {(() => {
+                  const { current, previous } = parseVersionedContent(
                     formData.content
-                      ? formData.content
-                          .replace(originalContent, "")
-                          .replace(/^(\n\n--- .* ---\n)/, "")
-                      : ""
-                  }
-                  onChange={handleChange}
-                  placeholder={t("journals.placeholders.content")}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                    formErrors.content ? "border-error" : "border-base-300"
-                  }`}
-                ></textarea>
-              </div>
+                  );
+
+                  return (
+                    <>
+                      {/* Text area for current content */}
+                      <textarea
+                        name="content"
+                        rows="8"
+                        value={current}
+                        onChange={handleChange}
+                        placeholder={t("journals.placeholders.content")}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                          formErrors.content
+                            ? "border-error"
+                            : "border-base-300"
+                        }`}
+                      ></textarea>
+
+                      {/* Show previous versions if they exist */}
+                      {previous.length > 0 && (
+                        <div className="mt-4">
+                          <div className="text-sm font-medium text-neutral mb-2">
+                            {t("journals.previousVersions")}
+                          </div>
+
+                          {previous.map((version, index) => (
+                            <div
+                              key={index}
+                              className="p-3 border rounded-md bg-base-200 mb-2"
+                            >
+                              <div className="text-xs text-neutral mb-1">
+                                {t("journals.versionFrom", {
+                                  date: version.timestamp,
+                                })}
+                              </div>
+                              <div className="whitespace-pre-wrap text-neutral line-through">
+                                {version.content}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+              </>
             ) : (
-              <textarea
-                name="content"
-                rows="12"
-                value={formData.content || ""}
-                onChange={handleChange}
-                placeholder={t("journals.placeholders.content")}
-                disabled={formData.status === "completed"}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                  formErrors.content ? "border-error" : "border-base-300"
-                } ${formData.status === "completed" ? "bg-base-200" : ""}`}
-              ></textarea>
+              // For completed or archived status, show readonly view
+              (() => {
+                const { current, previous } = parseVersionedContent(
+                  formData.content
+                );
+
+                return (
+                  <div>
+                    {/* Current content */}
+                    <div className="p-3 border rounded-md bg-base-100 mb-4">
+                      <div className="whitespace-pre-wrap">{current}</div>
+                    </div>
+
+                    {/* Previous versions */}
+                    {previous.length > 0 && (
+                      <div className="mt-4">
+                        <div className="text-sm font-medium text-neutral mb-2">
+                          {t("journals.previousVersions")}
+                        </div>
+
+                        {previous.map((version, index) => (
+                          <div
+                            key={index}
+                            className="p-3 border rounded-md bg-base-200 mb-2"
+                          >
+                            <div className="text-xs text-neutral mb-1">
+                              {t("journals.versionFrom", {
+                                date: version.timestamp,
+                              })}
+                            </div>
+                            <div className="whitespace-pre-wrap text-neutral line-through">
+                              {version.content}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()
             )}
+
             {formErrors.content && (
               <p className="text-error text-sm mt-1">{formErrors.content}</p>
             )}
@@ -385,7 +782,10 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
               placeholder={t("journals.placeholders.title")}
               required
               errorMessage={formErrors.title}
-              disabled={formData.status === "completed"}
+              disabled={
+                formData.status === "completed" ||
+                formData.status === "archived"
+              }
             />
 
             <div className="mb-4">
@@ -397,9 +797,15 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
                 value={formData.category || ""}
                 onChange={handleChange}
                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary border-base-300 ${
-                  formData.status === "completed" ? "bg-base-200" : ""
+                  formData.status === "completed" ||
+                  formData.status === "archived"
+                    ? "bg-base-200"
+                    : ""
                 }`}
-                disabled={formData.status === "completed"}
+                disabled={
+                  formData.status === "completed" ||
+                  formData.status === "archived"
+                }
               >
                 <option value="">{t("journals.placeholders.category")}</option>
                 {categories.map((category) => (
@@ -432,58 +838,61 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
           <label className="block text-sm font-medium mb-2">
             {t("journals.fields.status")}
           </label>
-          <div className="flex flex-wrap gap-2">
-            {formData.status === "draft" && (
-              <>
-                <button
-                  type="button"
-                  className="px-4 py-2 rounded-md border bg-success text-white border-success"
-                  onClick={handleSignJournal}
-                >
-                  {t("journals.actions.sign")}
-                </button>
 
-                <button
-                  type="button"
-                  className={`px-4 py-2 rounded-md border ${
-                    formData.status === "draft"
-                      ? "bg-info bg-opacity-10 border-info text-info"
-                      : "bg-base-100 border-base-300 text-neutral"
-                  }`}
-                  disabled
-                >
-                  {t("journals.status.draft")}
-                </button>
-              </>
-            )}
-
-            {formData.status === "completed" && (
+          {/* For draft journals, show full controls */}
+          {formData.status === "draft" && (
+            <div className="flex flex-wrap gap-2">
               <button
                 type="button"
-                className={`px-4 py-2 rounded-md border ${
-                  formData.status === "completed"
-                    ? "bg-success bg-opacity-10 border-success text-success"
-                    : "bg-base-100 border-base-300 text-neutral"
-                }`}
+                className="px-4 py-2 rounded-md border bg-success text-white border-success"
+                onClick={handleSignJournal}
+              >
+                {t("journals.actions.sign")}
+              </button>
+
+              <button
+                type="button"
+                className="px-4 py-2 rounded-md border bg-info bg-opacity-10 border-info text-info"
+                disabled
+              >
+                {t("journals.status.draft")}
+              </button>
+            </div>
+          )}
+
+          {/* For completed journals, only show archive option */}
+          {formData.status === "completed" && (
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                className="px-4 py-2 rounded-md border bg-success bg-opacity-10 border-success text-success"
                 disabled
               >
                 {t("journals.status.completed")}
               </button>
-            )}
 
-            <button
-              type="button"
-              className={`px-4 py-2 rounded-md border ${
-                formData.status === "archived"
-                  ? "bg-neutral bg-opacity-10 border-neutral text-neutral"
-                  : "bg-base-100 border-base-300 text-neutral"
-              }`}
-              onClick={() => handleStatusChange("archived")}
-              disabled={formData.status === "archived"}
-            >
-              {t("journals.status.archived")}
-            </button>
-          </div>
+              <button
+                type="button"
+                className="px-4 py-2 rounded-md border bg-base-100 border-base-300 text-neutral"
+                onClick={() => handleStatusChange("archived")}
+              >
+                {t("journals.status.archived")}
+              </button>
+            </div>
+          )}
+
+          {/* For archived journals, just show the status */}
+          {formData.status === "archived" && (
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                className="px-4 py-2 rounded-md border bg-neutral bg-opacity-10 border-neutral text-neutral"
+                disabled
+              >
+                {t("journals.status.archived")}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -494,7 +903,8 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
           disabled={
             isSubmitting ||
             (!isDirty && !isNew) ||
-            formData.status === "completed"
+            formData.status === "completed" ||
+            formData.status === "archived"
           }
           className="btn btn-primary"
         >

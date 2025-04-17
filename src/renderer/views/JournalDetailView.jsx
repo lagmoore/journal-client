@@ -129,10 +129,9 @@ const JournalDetailView = () => {
 
           // Check if user can delete (only admins or creator of a draft entry)
           const isAdmin = currentUser?.role === "admin";
-          const isCreator = journalData.createdBy === currentUser?.id;
-          const isDraft = journalData.status === "draft";
 
-          setCanDelete(isAdmin || (isCreator && isDraft));
+          // None can delete entries according to Swedish law
+          setCanDelete(false);
 
           // Fetch patient
           const patientResponse = await api.get(
@@ -212,13 +211,6 @@ const JournalDetailView = () => {
           navigate(`/dashboard/journals/${response.data.journal.id}`);
         } else {
           setJournal(response.data.journal);
-
-          // Update delete permission if status changed
-          const isAdmin = currentUser?.role === "admin";
-          const isCreator = response.data.journal.createdBy === currentUser?.id;
-          const isDraft = response.data.journal.status === "draft";
-
-          setCanDelete(isAdmin || (isCreator && isDraft));
         }
 
         return true;

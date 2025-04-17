@@ -10,7 +10,7 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
 
   // Check if entry is completed/signed to disable editing
   useEffect(() => {
-    setIsEditable(formData.status !== "completed");
+    setIsEditable(formData.status === "draft" || !formData.status);
   }, [formData.status]);
 
   // Handle input change
@@ -54,6 +54,44 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
       onChange({ medicationTime: `${today}T${currentTime}` });
     }
   }, [formData.medicationTime, isEditable]);
+
+  // Parse versioned content for notes
+  const parseVersionedContent = (content) => {
+    if (!content) return { current: "", previous: [] };
+
+    // Split by version marker (timestamp)
+    const parts = content.split(
+      /\n\n--- \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} ---\n\n/
+    );
+
+    if (parts.length <= 1) {
+      // No versions found, just return the content
+      return { current: content, previous: [] };
+    }
+
+    // First part is the newest content
+    const current = parts[0];
+
+    // Get timestamps for labeling previous versions
+    const timestamps =
+      content.match(/\n\n--- (\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) ---\n\n/g) ||
+      [];
+    const formattedTimestamps = timestamps
+      .map((ts) => ts.match(/(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})/))
+      .filter(Boolean)
+      .map((match) => match[1]);
+
+    // Create previous versions with their timestamps
+    const previous = [];
+    for (let i = 1; i < parts.length; i++) {
+      previous.push({
+        content: parts[i],
+        timestamp: formattedTimestamps[i - 1] || "Unknown date",
+      });
+    }
+
+    return { current, previous };
+  };
 
   return (
     <div className="space-y-6">
@@ -176,27 +214,100 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
         </div>
       </div>
 
-      {/* Optional notes */}
+      {/* Notes section with versioning */}
       <div className="mb-4">
         <label className="block text-sm font-medium mb-1">
           {t("journals.medication.notes")}
         </label>
-        {!isEditable && formData.content ? (
-          <div className="w-full px-3 py-2 border rounded-md bg-base-200">
-            <div className="whitespace-pre-wrap">{formData.content}</div>
-          </div>
+        {isEditable ? (
+          // If editable, show the editor with versioning
+          <>
+            {(() => {
+              const { current, previous } = parseVersionedContent(
+                formData.content
+              );
+
+              return (
+                <>
+                  {/* Text area for current content */}
+                  <textarea
+                    name="content"
+                    rows="4"
+                    value={current}
+                    onChange={handleChange}
+                    placeholder={t("journals.medication.notesPlaceholder")}
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary border-base-300`}
+                  ></textarea>
+
+                  {/* Show previous versions if they exist */}
+                  {previous.length > 0 && (
+                    <div className="mt-4">
+                      <div className="text-sm font-medium text-neutral mb-2">
+                        {t("journals.previousVersions")}
+                      </div>
+
+                      {previous.map((version, index) => (
+                        <div
+                          key={index}
+                          className="p-3 border rounded-md bg-base-200 mb-2"
+                        >
+                          <div className="text-xs text-neutral mb-1">
+                            {t("journals.versionFrom", {
+                              date: version.timestamp,
+                            })}
+                          </div>
+                          <div className="whitespace-pre-wrap text-neutral line-through">
+                            {version.content}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
+          </>
         ) : (
-          <textarea
-            name="content"
-            rows="4"
-            value={formData.content || ""}
-            onChange={handleChange}
-            placeholder={t("journals.medication.notesPlaceholder")}
-            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary border-base-300 ${
-              !isEditable ? "bg-base-200" : ""
-            }`}
-            disabled={!isEditable}
-          ></textarea>
+          // If not editable, just show the content
+          (() => {
+            const { current, previous } = parseVersionedContent(
+              formData.content
+            );
+
+            return (
+              <>
+                {current && (
+                  <div className="p-3 border rounded-md bg-base-100 whitespace-pre-wrap">
+                    {current}
+                  </div>
+                )}
+
+                {previous.length > 0 && (
+                  <div className="mt-4">
+                    <div className="text-sm font-medium text-neutral mb-2">
+                      {t("journals.previousVersions")}
+                    </div>
+
+                    {previous.map((version, index) => (
+                      <div
+                        key={index}
+                        className="p-3 border rounded-md bg-base-200 mb-2"
+                      >
+                        <div className="text-xs text-neutral mb-1">
+                          {t("journals.versionFrom", {
+                            date: version.timestamp,
+                          })}
+                        </div>
+                        <div className="whitespace-pre-wrap text-neutral line-through">
+                          {version.content}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
+            );
+          })()
         )}
       </div>
     </div>
