@@ -262,8 +262,12 @@
       "create": "Create Journal",
       "createFirst": "Create your first journal entry",
       "delete": "Delete",
-      "edit": "Edit"
+      "edit": "Edit",
+      "sign": "Sign Journal",
+      "append": "Append Note"
     },
+    "signedBy": "Signed by {{user}} on {{date}} at {{time}}",
+    "notSigned": "This entry is not signed",
     "entryTypes": {
       "note": "Note",
       "medication": "Medication",

@@ -262,8 +262,12 @@
       "create": "Skapa Journalanteckning",
       "createFirst": "Skapa din första journalanteckning",
       "delete": "Ta bort",
-      "edit": "Redigera"
+      "edit": "Redigera",
+      "sign": "Signera Journal",
+      "append": "Lägg till anteckning"
     },
+    "signedBy": "Signerad av {{user}} den {{date}} kl {{time}}",
+    "notSigned": "Denna anteckning är inte signerad",
     "entryTypes": {
       "note": "Anteckning",
       "medication": "Medicin",

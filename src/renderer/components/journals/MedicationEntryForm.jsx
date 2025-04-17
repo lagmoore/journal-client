@@ -1,20 +1,30 @@
 // src/renderer/components/journals/MedicationEntryForm.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import FormInput from "../FormInput";
 
 const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
   const { t } = useTranslation();
   const [useExistingMedication, setUseExistingMedication] = useState(true);
+  const [isEditable, setIsEditable] = useState(true);
+
+  // Check if entry is completed/signed to disable editing
+  useEffect(() => {
+    setIsEditable(formData.status !== "completed");
+  }, [formData.status]);
 
   // Handle input change
   const handleChange = (e) => {
+    if (!isEditable) return;
+
     const { name, value } = e.target;
     onChange({ [name]: value });
   };
 
   // Handle medication selection
   const handleMedicationSelect = (medication) => {
+    if (!isEditable) return;
+
     onChange({
       medicationName: medication.name,
       medicationDose: medication.standardDose,
@@ -23,6 +33,8 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
 
   // Handle time selection
   const handleTimeChange = (e) => {
+    if (!isEditable) return;
+
     onChange({ medicationTime: e.target.value });
   };
 
@@ -35,11 +47,13 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
   };
 
   // If no medicationTime is set, initialize with current time
-  if (!formData.medicationTime) {
-    const today = new Date().toISOString().split("T")[0];
-    const currentTime = getCurrentTime();
-    onChange({ medicationTime: `${today}T${currentTime}` });
-  }
+  useEffect(() => {
+    if (!formData.medicationTime && isEditable) {
+      const today = new Date().toISOString().split("T")[0];
+      const currentTime = getCurrentTime();
+      onChange({ medicationTime: `${today}T${currentTime}` });
+    }
+  }, [formData.medicationTime, isEditable]);
 
   return (
     <div className="space-y-6">
@@ -48,8 +62,8 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
           {t("journals.medication.title")}
         </h3>
 
-        {/* Medication selection method toggle */}
-        {medications && medications.length > 0 && (
+        {/* Medication selection method toggle - Only show if there are medications and entry is editable */}
+        {medications && medications.length > 0 && isEditable && (
           <div className="mb-4">
             <div className="flex gap-4 mb-4">
               <button
@@ -60,6 +74,7 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
                     : "bg-base-100 border-base-300"
                 }`}
                 onClick={() => setUseExistingMedication(true)}
+                disabled={!isEditable}
               >
                 {t("journals.medication.existingMedication")}
               </button>
@@ -71,6 +86,7 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
                     : "bg-base-100 border-base-300"
                 }`}
                 onClick={() => setUseExistingMedication(false)}
+                disabled={!isEditable}
               >
                 {t("journals.medication.newMedication")}
               </button>
@@ -78,7 +94,7 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
           </div>
         )}
 
-        {/* Existing medications selection */}
+        {/* Existing medications selection - Display if medications exist and using existing medication option */}
         {useExistingMedication && medications && medications.length > 0 ? (
           <div className="mb-4">
             <label className="block text-sm font-medium mb-2">
@@ -98,6 +114,7 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
                         : "bg-base-100 border-base-300 hover:border-success"
                     }`}
                     onClick={() => handleMedicationSelect(medication)}
+                    disabled={!isEditable}
                   >
                     <div className="font-medium">{medication.name}</div>
                     <div className="text-sm">{medication.standardDose}</div>
@@ -119,6 +136,7 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
               placeholder={t("journals.medication.medicationNamePlaceholder")}
               required
               errorMessage={errors.medicationName}
+              disabled={!isEditable}
             />
           </div>
         )}
@@ -133,6 +151,7 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
             placeholder={t("journals.medication.dosePlaceholder")}
             required
             errorMessage={errors.medicationDose}
+            disabled={!isEditable}
           />
 
           <div className="mb-4">
@@ -147,7 +166,8 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
               onChange={handleTimeChange}
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
                 errors.medicationTime ? "border-error" : "border-base-300"
-              }`}
+              } ${!isEditable ? "bg-base-200" : ""}`}
+              disabled={!isEditable}
             />
             {errors.medicationTime && (
               <p className="text-error text-sm mt-1">{errors.medicationTime}</p>
@@ -161,14 +181,23 @@ const MedicationEntryForm = ({ formData, medications, onChange, errors }) => {
         <label className="block text-sm font-medium mb-1">
           {t("journals.medication.notes")}
         </label>
-        <textarea
-          name="content"
-          rows="4"
-          value={formData.content || ""}
-          onChange={handleChange}
-          placeholder={t("journals.medication.notesPlaceholder")}
-          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary border-base-300"
-        ></textarea>
+        {!isEditable && formData.content ? (
+          <div className="w-full px-3 py-2 border rounded-md bg-base-200">
+            <div className="whitespace-pre-wrap">{formData.content}</div>
+          </div>
+        ) : (
+          <textarea
+            name="content"
+            rows="4"
+            value={formData.content || ""}
+            onChange={handleChange}
+            placeholder={t("journals.medication.notesPlaceholder")}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary border-base-300 ${
+              !isEditable ? "bg-base-200" : ""
+            }`}
+            disabled={!isEditable}
+          ></textarea>
+        )}
       </div>
     </div>
   );

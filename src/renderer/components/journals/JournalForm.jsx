@@ -16,6 +16,7 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const [isDirty, setIsDirty] = useState(false);
+  const [originalContent, setOriginalContent] = useState("");
 
   // Determine the entry type - default to 'note' if not specified
   const entryType = formData.entryType || "note";
@@ -30,19 +31,66 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
     "other",
   ];
 
+  // Set default title based on entry type for new entries
+  useEffect(() => {
+    if (
+      isNew &&
+      entryType !== "note" &&
+      (!formData.title || formData.title === "")
+    ) {
+      let defaultTitle = "";
+      switch (entryType) {
+        case "medication":
+          defaultTitle = t("journals.medication.title");
+          break;
+        case "drug_test":
+          defaultTitle = t("journals.drugTest.defaultTitle");
+          break;
+        case "incident":
+          defaultTitle = t("journals.incident.defaultTitle");
+          break;
+        default:
+          defaultTitle = "";
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        title: defaultTitle,
+      }));
+    }
+  }, [isNew, entryType, t, formData.title]);
+
   // Update form data when journal changes
   useEffect(() => {
     setFormData(journal);
+    setOriginalContent(journal.content || "");
     setIsDirty(false);
   }, [journal]);
 
   // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+
+    // For content, if this is an existing journal and not in draft status,
+    // we need to append instead of replacing
+    if (name === "content" && !isNew && formData.status !== "draft") {
+      const newContent =
+        originalContent +
+        "\n\n--- " +
+        new Date().toLocaleString() +
+        " ---\n" +
+        value;
+      setFormData((prev) => ({
+        ...prev,
+        content: newContent,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+
     setIsDirty(true);
   };
 
@@ -128,11 +176,17 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
     setIsSubmitting(true);
 
     try {
-      const result = await onSave(formData);
+      // Always set status to draft for new entries
+      const dataToSave = isNew ? { ...formData, status: "draft" } : formData;
+
+      const result = await onSave(dataToSave);
 
       if (result === true) {
         // Success
         setIsDirty(false);
+        if (isNew) {
+          setOriginalContent(formData.content || "");
+        }
       } else if (result && result.validationErrors) {
         // Backend validation errors
         setFormErrors(result.validationErrors);
@@ -149,6 +203,11 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
       status,
     }));
     setIsDirty(true);
+  };
+
+  // Handle entry signing
+  const handleSignJournal = () => {
+    handleStatusChange("completed");
   };
 
   // Render appropriate form based on entry type
@@ -190,16 +249,46 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
               {t("journals.fields.content")}
               <span className="text-error ml-1">*</span>
             </label>
-            <textarea
-              name="content"
-              rows="12"
-              value={formData.content || ""}
-              onChange={handleChange}
-              placeholder={t("journals.placeholders.content")}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
-                formErrors.content ? "border-error" : "border-base-300"
-              }`}
-            ></textarea>
+            {!isNew && formData.status !== "draft" ? (
+              <div>
+                <div className="w-full px-3 py-2 border rounded-md bg-base-200 mb-4">
+                  <div
+                    style={{ textDecoration: "line-through" }}
+                    className="whitespace-pre-wrap"
+                  >
+                    {originalContent}
+                  </div>
+                </div>
+                <textarea
+                  name="content"
+                  rows="6"
+                  value={
+                    formData.content
+                      ? formData.content
+                          .replace(originalContent, "")
+                          .replace(/^(\n\n--- .* ---\n)/, "")
+                      : ""
+                  }
+                  onChange={handleChange}
+                  placeholder={t("journals.placeholders.content")}
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                    formErrors.content ? "border-error" : "border-base-300"
+                  }`}
+                ></textarea>
+              </div>
+            ) : (
+              <textarea
+                name="content"
+                rows="12"
+                value={formData.content || ""}
+                onChange={handleChange}
+                placeholder={t("journals.placeholders.content")}
+                disabled={formData.status === "completed"}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary ${
+                  formErrors.content ? "border-error" : "border-base-300"
+                } ${formData.status === "completed" ? "bg-base-200" : ""}`}
+              ></textarea>
+            )}
             {formErrors.content && (
               <p className="text-error text-sm mt-1">{formErrors.content}</p>
             )}
@@ -217,37 +306,89 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
         </div>
       )}
 
+      {/* Journal status indicator */}
+      {!isNew && (
+        <div className="flex justify-between items-center">
+          <div
+            className={`inline-flex items-center px-3 py-1 rounded-full ${
+              formData.status === "completed"
+                ? "bg-success bg-opacity-10 text-success"
+                : formData.status === "archived"
+                ? "bg-neutral bg-opacity-10 text-neutral"
+                : "bg-info bg-opacity-10 text-info"
+            } text-sm font-medium`}
+          >
+            {t(`journals.status.${formData.status}`)}
+          </div>
+
+          {formData.status === "completed" && formData.updatedByName && (
+            <div className="text-sm text-neutral">
+              {t("journals.signedBy", {
+                user: formData.updatedByName,
+                date: new Date(formData.updatedAt).toLocaleDateString(),
+                time: new Date(formData.updatedAt).toLocaleTimeString(),
+              })}
+            </div>
+          )}
+
+          {formData.status === "draft" && (
+            <div className="text-sm text-warning">
+              {t("journals.notSigned")}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Journal details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <FormInput
-          type="text"
-          name="title"
-          value={formData.title || ""}
-          onChange={handleChange}
-          label={t("journals.fields.title")}
-          placeholder={t("journals.placeholders.title")}
-          required
-          errorMessage={formErrors.title}
-        />
+        {/* Only show title and category inputs for note type or if we need to edit */}
+        {(entryType === "note" || (!isNew && formData.status === "draft")) && (
+          <>
+            <FormInput
+              type="text"
+              name="title"
+              value={formData.title || ""}
+              onChange={handleChange}
+              label={t("journals.fields.title")}
+              placeholder={t("journals.placeholders.title")}
+              required
+              errorMessage={formErrors.title}
+              disabled={formData.status === "completed"}
+            />
 
-        <div className="mb-4">
-          <label className="block text-sm font-medium mb-1">
-            {t("journals.fields.category")}
-          </label>
-          <select
-            name="category"
-            value={formData.category || ""}
-            onChange={handleChange}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary border-base-300"
-          >
-            <option value="">{t("journals.placeholders.category")}</option>
-            {categories.map((category) => (
-              <option key={category} value={category}>
-                {t(`journals.categories.${category}`)}
-              </option>
-            ))}
-          </select>
-        </div>
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-1">
+                {t("journals.fields.category")}
+              </label>
+              <select
+                name="category"
+                value={formData.category || ""}
+                onChange={handleChange}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary border-base-300 ${
+                  formData.status === "completed" ? "bg-base-200" : ""
+                }`}
+                disabled={formData.status === "completed"}
+              >
+                <option value="">{t("journals.placeholders.category")}</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {t(`journals.categories.${category}`)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </>
+        )}
+
+        {/* Hide inputs for specialized journal types if it's a new entry */}
+        {isNew && entryType !== "note" && (
+          <div className="md:col-span-2">
+            <h3 className="font-medium text-lg mb-2">
+              {t(`journals.new.${entryType}`)}
+            </h3>
+            {/* We could add a description here if needed */}
+          </div>
+        )}
       </div>
 
       {/* Type-specific form */}
@@ -260,28 +401,44 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
             {t("journals.fields.status")}
           </label>
           <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              className={`px-4 py-2 rounded-md border ${
-                formData.status === "draft"
-                  ? "bg-info bg-opacity-10 border-info text-info"
-                  : "bg-base-100 border-base-300 text-neutral"
-              }`}
-              onClick={() => handleStatusChange("draft")}
-            >
-              {t("journals.status.draft")}
-            </button>
-            <button
-              type="button"
-              className={`px-4 py-2 rounded-md border ${
-                formData.status === "completed"
-                  ? "bg-success bg-opacity-10 border-success text-success"
-                  : "bg-base-100 border-base-300 text-neutral"
-              }`}
-              onClick={() => handleStatusChange("completed")}
-            >
-              {t("journals.status.completed")}
-            </button>
+            {formData.status === "draft" && (
+              <>
+                <button
+                  type="button"
+                  className="px-4 py-2 rounded-md border bg-success text-white border-success"
+                  onClick={handleSignJournal}
+                >
+                  {t("journals.actions.sign")}
+                </button>
+
+                <button
+                  type="button"
+                  className={`px-4 py-2 rounded-md border ${
+                    formData.status === "draft"
+                      ? "bg-info bg-opacity-10 border-info text-info"
+                      : "bg-base-100 border-base-300 text-neutral"
+                  }`}
+                  disabled
+                >
+                  {t("journals.status.draft")}
+                </button>
+              </>
+            )}
+
+            {formData.status === "completed" && (
+              <button
+                type="button"
+                className={`px-4 py-2 rounded-md border ${
+                  formData.status === "completed"
+                    ? "bg-success bg-opacity-10 border-success text-success"
+                    : "bg-base-100 border-base-300 text-neutral"
+                }`}
+                disabled
+              >
+                {t("journals.status.completed")}
+              </button>
+            )}
+
             <button
               type="button"
               className={`px-4 py-2 rounded-md border ${
@@ -290,6 +447,7 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
                   : "bg-base-100 border-base-300 text-neutral"
               }`}
               onClick={() => handleStatusChange("archived")}
+              disabled={formData.status === "archived"}
             >
               {t("journals.status.archived")}
             </button>
@@ -301,7 +459,11 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
       <div className="flex justify-end gap-4">
         <button
           type="submit"
-          disabled={isSubmitting || (!isDirty && !isNew)}
+          disabled={
+            isSubmitting ||
+            (!isDirty && !isNew) ||
+            formData.status === "completed"
+          }
           className="btn btn-primary"
         >
           {isSubmitting ? (

@@ -13,7 +13,7 @@ import ConfirmDialog from "../components/common/ConfirmDialog";
 
 const JournalDetailView = () => {
   const { t } = useTranslation();
-  const { accessToken } = useAuth();
+  const { accessToken, currentUser } = useAuth();
   const { journalId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
@@ -32,6 +32,7 @@ const JournalDetailView = () => {
   const [medications, setMedications] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [canDelete, setCanDelete] = useState(false);
 
   // New journal mode
   const isNewJournal = journalId === "new";
@@ -81,10 +82,19 @@ const JournalDetailView = () => {
                 status: "draft",
               });
             } else {
-              // Create default journal object
+              // Create default journal object with title based on entry type
+              let title = "";
+              if (entryTypeFromQuery === "medication") {
+                title = t("journals.medication.title");
+              } else if (entryTypeFromQuery === "drug_test") {
+                title = t("journals.drugTest.defaultTitle");
+              } else if (entryTypeFromQuery === "incident") {
+                title = t("journals.incident.defaultTitle");
+              }
+
               setJournal({
                 patientId: patientIdFromQuery,
-                title: "",
+                title: title,
                 content: "",
                 category: "",
                 status: "draft",
@@ -116,6 +126,13 @@ const JournalDetailView = () => {
         if (journalResponse.data.success) {
           const journalData = journalResponse.data.journal;
           setJournal(journalData);
+
+          // Check if user can delete (only admins or creator of a draft entry)
+          const isAdmin = currentUser?.role === "admin";
+          const isCreator = journalData.createdBy === currentUser?.id;
+          const isDraft = journalData.status === "draft";
+
+          setCanDelete(isAdmin || (isCreator && isDraft));
 
           // Fetch patient
           const patientResponse = await api.get(
@@ -165,6 +182,8 @@ const JournalDetailView = () => {
     patientIdFromQuery,
     entryTypeFromQuery,
     initialDataFromState,
+    currentUser?.id,
+    currentUser?.role,
   ]);
 
   // Save journal
@@ -193,6 +212,13 @@ const JournalDetailView = () => {
           navigate(`/dashboard/journals/${response.data.journal.id}`);
         } else {
           setJournal(response.data.journal);
+
+          // Update delete permission if status changed
+          const isAdmin = currentUser?.role === "admin";
+          const isCreator = response.data.journal.createdBy === currentUser?.id;
+          const isDraft = response.data.journal.status === "draft";
+
+          setCanDelete(isAdmin || (isCreator && isDraft));
         }
 
         return true;
@@ -294,7 +320,7 @@ const JournalDetailView = () => {
           )}
         </div>
 
-        {!isNewJournal && (
+        {!isNewJournal && canDelete && (
           <div>
             <button
               onClick={() => setShowDeleteDialog(true)}
