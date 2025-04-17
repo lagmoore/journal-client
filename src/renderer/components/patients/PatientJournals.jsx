@@ -1,5 +1,5 @@
 // src/renderer/components/patients/PatientJournals.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -103,6 +103,7 @@ const PatientJournals = ({
 }) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const dropdownRef = useRef(null);
 
   // State
   const [searchTerm, setSearchTerm] = useState("");
@@ -111,6 +112,21 @@ const PatientJournals = ({
     status: "all", // all, draft, completed, archived
     period: "all", // all, today, week, month, year
   });
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // Format date - different formats based on date parts
   const formatDate = (dateString) => {
@@ -264,6 +280,7 @@ const PatientJournals = ({
 
   // Handle new entry button click with type
   const handleNewEntryClick = (entryType) => {
+    setShowDropdown(false);
     onCreateJournal(entryType);
   };
 
@@ -441,10 +458,10 @@ const PatientJournals = ({
         </div>
 
         <div className="flex gap-2 w-full md:w-auto">
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <button
               className="btn btn-primary flex items-center gap-1"
-              onClick={() => handleNewEntryClick("note")}
+              onClick={() => setShowDropdown(!showDropdown)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -460,59 +477,51 @@ const PatientJournals = ({
               </svg>
               {t("journals.actions.create")}
             </button>
+
+            {/* Dropdown menu for journal types */}
+            {showDropdown && (
+              <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-base-100 ring-1 ring-black ring-opacity-5 z-10">
+                <div className="py-1">
+                  {/* Note option */}
+                  <button
+                    onClick={() => handleNewEntryClick("note")}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-base-200 flex items-center gap-2"
+                  >
+                    <EntryTypeIcon type="note" className="h-5 w-5" />
+                    <span>{t("journals.entryTypes.note")}</span>
+                  </button>
+
+                  {/* Medication option */}
+                  <button
+                    onClick={() => handleNewEntryClick("medication")}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-base-200 flex items-center gap-2"
+                  >
+                    <EntryTypeIcon type="medication" className="h-5 w-5" />
+                    <span>{t("journals.entryTypes.medication")}</span>
+                  </button>
+
+                  {/* Drug test option */}
+                  <button
+                    onClick={() => handleNewEntryClick("drug_test")}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-base-200 flex items-center gap-2"
+                  >
+                    <EntryTypeIcon type="drug_test" className="h-5 w-5" />
+                    <span>{t("journals.entryTypes.drugTest")}</span>
+                  </button>
+
+                  {/* Incident option */}
+                  <button
+                    onClick={() => handleNewEntryClick("incident")}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-base-200 flex items-center gap-2"
+                  >
+                    <EntryTypeIcon type="incident" className="h-5 w-5" />
+                    <span>{t("journals.entryTypes.incident")}</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      </div>
-
-      {/* Action buttons for different entry types */}
-      <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-        <button
-          onClick={() => handleNewEntryClick("note")}
-          className={`p-3 rounded-lg border flex items-center gap-2 ${
-            filters.entryType === "note"
-              ? "bg-primary bg-opacity-10 border-primary text-primary"
-              : "bg-base-100 border-base-300 hover:bg-base-200"
-          }`}
-        >
-          <EntryTypeIcon type="note" className="h-5 w-5" />
-          <span>{t("journals.entryTypes.note")}</span>
-        </button>
-
-        <button
-          onClick={() => handleNewEntryClick("medication")}
-          className={`p-3 rounded-lg border flex items-center gap-2 ${
-            filters.entryType === "medication"
-              ? "bg-primary bg-opacity-10 border-primary text-primary"
-              : "bg-base-100 border-base-300 hover:bg-base-200"
-          }`}
-        >
-          <EntryTypeIcon type="medication" className="h-5 w-5" />
-          <span>{t("journals.entryTypes.medication")}</span>
-        </button>
-
-        <button
-          onClick={() => handleNewEntryClick("drug_test")}
-          className={`p-3 rounded-lg border flex items-center gap-2 ${
-            filters.entryType === "drug_test"
-              ? "bg-primary bg-opacity-10 border-primary text-primary"
-              : "bg-base-100 border-base-300 hover:bg-base-200"
-          }`}
-        >
-          <EntryTypeIcon type="drug_test" className="h-5 w-5" />
-          <span>{t("journals.entryTypes.drugTest")}</span>
-        </button>
-
-        <button
-          onClick={() => handleNewEntryClick("incident")}
-          className={`p-3 rounded-lg border flex items-center gap-2 ${
-            filters.entryType === "incident"
-              ? "bg-primary bg-opacity-10 border-primary text-primary"
-              : "bg-base-100 border-base-300 hover:bg-base-200"
-          }`}
-        >
-          <EntryTypeIcon type="incident" className="h-5 w-5" />
-          <span>{t("journals.entryTypes.incident")}</span>
-        </button>
       </div>
 
       {/* Filters */}
@@ -682,7 +691,7 @@ const PatientJournals = ({
               : t("journals.empty")}
           </p>
           <button
-            onClick={() => handleNewEntryClick("note")}
+            onClick={() => setShowDropdown(true)}
             className="btn btn-primary mt-4"
           >
             {t("journals.actions.createFirst")}

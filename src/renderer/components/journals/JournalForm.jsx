@@ -770,8 +770,8 @@ const JournalForm = ({ journal, journalId, medications, onSave, isNew }) => {
 
       {/* Journal details */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Only show title and category inputs for note type or if we need to edit */}
-        {(entryType === "note" || (!isNew && formData.status === "draft")) && (
+        {/* Only show title and category inputs for note type */}
+        {entryType === "note" && (
           <>
             <FormInput
               type="text"
