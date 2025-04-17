@@ -337,6 +337,7 @@ const JournalDetailView = () => {
         <div className="p-6">
           <JournalForm
             journal={journal}
+            journalId={journalId}
             medications={medications}
             onSave={handleSaveJournal}
             isNew={isNewJournal}

@@ -2,14 +2,19 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import FormInput from "../FormInput";
+import { useAuth } from "../../contexts/AuthContext";
+import api from "../../utils/api";
+import toast from "react-hot-toast";
 
 // Import specialized form components for each entry type
 import MedicationEntryForm from "./MedicationEntryForm";
 import DrugTestEntryForm from "./DrugTestEntryForm";
 import IncidentEntryForm from "./IncidentEntryForm";
 
+
 const JournalForm = ({ journal, medications, onSave, isNew }) => {
   const { t } = useTranslation();
+  const { accessToken } = useAuth();
 
   // Form state
   const [formData, setFormData] = useState(journal);
@@ -206,8 +211,35 @@ const JournalForm = ({ journal, medications, onSave, isNew }) => {
   };
 
   // Handle entry signing
-  const handleSignJournal = () => {
-    handleStatusChange("completed");
+  const handleSignJournal = async () => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+
+    try {
+      // Call the sign endpoint
+      const response = await api.post(
+        `/journals/${journal.id}/sign`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }
+      );
+
+      if (response.data.success) {
+        // Update local state with the signed journal
+        setFormData(response.data.journal);
+        toast.success(t("journals.success.signed"));
+        setIsDirty(false);
+      } else {
+        toast.error(response.data.message || t("journals.errors.signFailed"));
+      }
+    } catch (error) {
+      console.error("Error signing journal:", error);
+      toast.error(t("journals.errors.signFailed"));
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Render appropriate form based on entry type
